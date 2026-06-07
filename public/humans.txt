@@ -1,0 +1,16 @@
+/* TEAM */
+Founder & Developer: Joshua Bostic
+Location: Indiana, USA
+Company: Gilgamesh Enterprise LLC (Wyoming)
+Contact: gilgameshenterprisellc@gmail.com
+
+/* SITE */
+Language: English
+Doctype: HTML5
+Framework: Next.js 15 (App Router)
+Hosted: Vercel (free tier)
+Built with: TypeScript, Tailwind CSS
+
+/* PHILOSOPHY */
+Free. Always. No gatekeeping. No paywalls unless it costs us directly.
+Power to the people. Build the door.
