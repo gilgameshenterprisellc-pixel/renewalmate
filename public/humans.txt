@@ -10,6 +10,14 @@ Doctype: HTML5
 Framework: Next.js 15 (App Router)
 Hosted: Vercel (free tier)
 Built with: TypeScript, Tailwind CSS
+DNS: GoDaddy
+Last updated: June 2026
+
+/* PAGES */
+Blog: /blog (category filter: Alternatives, Personal Finance, Tips, Privacy)
+FAQ: /faq (About, Features, vs. Competitors, Privacy sections)
+Guides: /guides
+vs. Competitors: /vs/rocket-money /vs/monarch-money /vs/ynab (and more)
 
 /* PHILOSOPHY */
 Free. Always. No gatekeeping. No paywalls unless it costs us directly.
