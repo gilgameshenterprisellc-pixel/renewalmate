@@ -32,6 +32,31 @@ const GUIDES = [
     desc: 'Tip jars, fan subscriptions, digital products, brand deals, affiliate marketing, and a $5K/month roadmap.',
     href: 'https://socialmate.studio/guides/creator-monetization', tag: 'Monetization',
   },
+  {
+    vol: 'Vol. 6', title: 'Your First 30 Days on Social Media',
+    desc: 'The One-Platform Rule, profile setup, your first 10 posts, and getting your first 100 followers for free.',
+    href: 'https://socialmate.studio/guides/first-30-days-social-media', tag: 'Social Media',
+  },
+  {
+    vol: 'Vol. 7', title: 'Build Your Brand from Zero',
+    desc: 'Finding your niche, telling your story, a free visual identity, and turning your brand into opportunity.',
+    href: 'https://socialmate.studio/guides/build-your-brand-from-zero', tag: 'Personal Brand',
+  },
+  {
+    vol: 'Vol. 8', title: 'From Side Hustle to Full-Time Creator',
+    desc: 'Building while you work, your first $500 online, the creator revenue stack, and the bridge income strategy.',
+    href: 'https://socialmate.studio/guides/side-hustle-to-full-time-creator', tag: 'Full-Time Creator',
+  },
+  {
+    vol: 'Vol. 9', title: "The Content Creator's Business Guide",
+    desc: 'LLCs, taxes, contracts, pricing your work, tools worth the cost, and brand deal negotiation.',
+    href: 'https://socialmate.studio/guides/content-creator-business', tag: 'Business',
+  },
+  {
+    vol: 'Vol. 10', title: 'AI Tools for Creators: The Complete 2026 Handbook',
+    desc: 'The full AI stack for 2026 — ideation, writing, visuals, video, scheduling, and analytics.',
+    href: 'https://socialmate.studio/guides/ai-tools-for-creators-2026', tag: 'AI Tools',
+  },
 ]
 
 export default function GuidesPage() {
