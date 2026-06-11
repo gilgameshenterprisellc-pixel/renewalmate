@@ -217,19 +217,21 @@ export default function VsPage({ params }: { params: Promise<{ slug: string }> }
         </div>
 
         {/* COMPARISON TABLE */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-12">
-          <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-100 px-6 py-3">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Feature</p>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{data.name}</p>
-            <p className="text-xs font-bold text-[#1e7a4a] uppercase tracking-wider">RenewalMate</p>
-          </div>
-          {data.rows.map((row, i) => (
-            <div key={i} className={`grid grid-cols-3 px-6 py-4 ${i % 2 === 0 ? '' : 'bg-gray-50/50'} border-b border-gray-50 last:border-0`}>
-              <p className="text-sm font-semibold text-gray-700">{row.feature}</p>
-              <p className="text-sm text-gray-500">{row.them}</p>
-              <p className="text-sm font-semibold text-[#1a2e22]">{row.us}</p>
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto mb-12">
+          <div className="min-w-[480px]">
+            <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-100 px-6 py-3">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Feature</p>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{data.name}</p>
+              <p className="text-xs font-bold text-[#1e7a4a] uppercase tracking-wider">RenewalMate</p>
             </div>
-          ))}
+            {data.rows.map((row, i) => (
+              <div key={i} className={`grid grid-cols-3 px-6 py-4 ${i % 2 === 0 ? '' : 'bg-gray-50/50'} border-b border-gray-50 last:border-0`}>
+                <p className="text-sm font-semibold text-gray-700">{row.feature}</p>
+                <p className="text-sm text-gray-500">{row.them}</p>
+                <p className="text-sm font-semibold text-[#1a2e22]">{row.us}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* VERDICT */}
