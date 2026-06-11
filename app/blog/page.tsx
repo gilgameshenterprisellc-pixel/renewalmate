@@ -20,12 +20,13 @@ export default function BlogPage() {
             </div>
             <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
           </Link>
-          <div className="flex items-center gap-5 text-sm">
+          <div className="hidden sm:flex items-center gap-5 text-sm">
             <Link href="/guides" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Guides</Link>
             <Link href="/blog" className="text-[#1e7a4a] font-semibold">Blog</Link>
             <Link href="/faq" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">FAQ</Link>
             <Link href="/#waitlist" className="px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
           </div>
+          <Link href="/#waitlist" className="sm:hidden px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
         </div>
       </nav>
 
