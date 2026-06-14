@@ -7,8 +7,8 @@ const FEATURES = [
   { icon: '📊', title: 'Full Dashboard', desc: 'See every subscription, bill, and recurring cost in one place. Overdue, due soon, on track.' },
   { icon: '💸', title: 'Spot the Waste', desc: 'Instantly see what you\'re paying for but not using. Cancel what doesn\'t serve you.' },
   { icon: '🗂️', title: 'Every Category', desc: 'Entertainment, utilities, insurance, software, gym — all organized automatically.' },
-  { icon: '🔒', title: 'No Bank Sync', desc: 'Manual entry only. Your bank credentials never leave your hands. Privacy first.' },
-  { icon: '✅', title: 'Free. Forever.', desc: 'No freemium traps. No premium tier for basic features. RenewalMate is free because it costs us nothing to run.' },
+  { icon: '🔒', title: 'No Bank Sync Required', desc: 'Manual entry by default. Your bank credentials never leave your hands unless you opt in. Privacy first.' },
+  { icon: '✅', title: 'Free Forever', desc: 'Manual tracking is free forever — no credit card, no catch. The only paid tier (RenewalMate Plus) covers features that cost us money to run, like bank sync and AI insights.' },
 ]
 
 const PAIN_POINTS = [
@@ -71,7 +71,7 @@ export default function Home() {
         <div className="relative max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-[#1e7a4a]/10 text-[#1e7a4a] text-xs font-bold px-4 py-1.5 rounded-full mb-6 fade-up">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1e7a4a] animate-pulse" />
-            Free. Always. No paywall.
+            Free to track. Always.
           </div>
           <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-[#1a2e22] mb-5 fade-up-2 leading-[1.05]">
             Stop bleeding money<br />
@@ -86,7 +86,7 @@ export default function Home() {
             <Link href="/signup" className="inline-block px-8 py-3.5 bg-[#1e7a4a] text-white text-sm font-black rounded-full hover:bg-[#166038] transition-colors shadow-lg shadow-[#1e7a4a]/20">
               Get Started Free →
             </Link>
-            <p className="text-gray-400 text-xs mt-3">No bank sync. No credit card. Free, forever.</p>
+            <p className="text-gray-400 text-xs mt-3">No bank sync required. No credit card. Free to track, forever.</p>
           </div>
 
           {/* STATS */}
@@ -147,7 +147,7 @@ export default function Home() {
           <p className="text-green-200 text-xs font-bold tracking-[0.3em] uppercase mb-3">It's Live</p>
           <h2 className="text-3xl font-black text-white mb-3">Be first in the door.</h2>
           <p className="text-green-100 text-sm leading-relaxed mb-8">
-            RenewalMate is live and completely free. Create your account and
+            RenewalMate is live, and manual tracking is free forever. Create your account and
             start tracking your bills and subscriptions in under 2 minutes.
           </p>
           <Link

@@ -30,7 +30,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
 **Your free options today:**
 
-**RenewalMate** — free forever, manual entry, no bank sync required. Best for people who want to track subscriptions and recurring bills without sharing bank login credentials.
+**RenewalMate** — manual entry is free forever, no bank sync required (optional Plaid bank sync available on the paid Plus tier). Best for people who want to track subscriptions and recurring bills without sharing bank login credentials by default.
 
 **LowerMySubs** — free, focused specifically on subscriptions, has guides for canceling 50+ services.
 
