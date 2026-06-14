@@ -57,9 +57,9 @@ export default function Home() {
             <a href="#how" className="hover:text-[#1e7a4a] transition-colors">How It Works</a>
             <a href="#mission" className="hover:text-[#1e7a4a] transition-colors">Mission</a>
           </div>
-          <a href="#waitlist" className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors">
-            Get Early Access
-          </a>
+          <Link href="/signup" className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors">
+            Get Started Free
+          </Link>
         </div>
       </nav>
 
@@ -81,6 +81,13 @@ export default function Home() {
             The average person wastes <strong className="text-[#1a2e22]">$273/month</strong> on subscriptions and recurring expenses they don't track.
             RenewalMate shows you exactly where your money is going — in one free dashboard.
           </p>
+
+          <div className="fade-up-3 mb-12">
+            <Link href="/signup" className="inline-block px-8 py-3.5 bg-[#1e7a4a] text-white text-sm font-black rounded-full hover:bg-[#166038] transition-colors shadow-lg shadow-[#1e7a4a]/20">
+              Get Started Free →
+            </Link>
+            <p className="text-gray-400 text-xs mt-3">No bank sync. No credit card. Free, forever.</p>
+          </div>
 
           {/* STATS */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12 fade-up-3">
@@ -134,41 +141,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* WAITLIST */}
-      <section id="waitlist" className="py-16 px-6 bg-[#1e7a4a]">
+      {/* SIGNUP CTA */}
+      <section id="signup" className="py-16 px-6 bg-[#1e7a4a]">
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-green-200 text-xs font-bold tracking-[0.3em] uppercase mb-3">Early Access</p>
+          <p className="text-green-200 text-xs font-bold tracking-[0.3em] uppercase mb-3">It's Live</p>
           <h2 className="text-3xl font-black text-white mb-3">Be first in the door.</h2>
           <p className="text-green-100 text-sm leading-relaxed mb-8">
-            We're rebuilding the app from the ground up — faster, cleaner, still completely free.
-            Drop your email and you'll be first to know when it's ready.
+            RenewalMate is live and completely free. Create your account and
+            start tracking your bills and subscriptions in under 2 minutes.
           </p>
-          {submitted ? (
-            <div className="bg-white/20 rounded-2xl px-8 py-6">
-              <p className="text-2xl mb-2">🎉</p>
-              <p className="text-white font-black">You're on the list.</p>
-              <p className="text-green-100 text-sm mt-1">We'll reach out when early access opens.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 px-5 py-3 rounded-full bg-white text-[#1a2e22] placeholder-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-200"
-              />
-              <button
-                type="submit"
-                disabled={submitting}
-                className="px-7 py-3 bg-[#1a2e22] text-white text-sm font-black rounded-full hover:bg-black transition-colors disabled:opacity-60"
-              >
-                {submitting ? 'Joining...' : 'Join Waitlist →'}
-              </button>
-            </form>
-          )}
-          <p className="text-green-200/60 text-xs mt-4">No spam. Unsubscribe anytime.</p>
+          <Link
+            href="/signup"
+            className="inline-block px-8 py-3.5 bg-[#1a2e22] text-white text-sm font-black rounded-full hover:bg-black transition-colors"
+          >
+            Create Free Account →
+          </Link>
+          <p className="text-green-200/60 text-xs mt-4">
+            Already have an account?{' '}
+            <Link href="/login" className="text-white underline hover:no-underline">
+              Log in
+            </Link>
+          </p>
+
+          <div className="mt-10 pt-8 border-t border-white/10">
+            <p className="text-green-100 text-xs mb-4">Want product updates instead? Drop your email.</p>
+            {submitted ? (
+              <p className="text-white text-sm font-bold">🎉 You're on the list.</p>
+            ) : (
+              <form onSubmit={handleWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 px-5 py-3 rounded-full bg-white text-[#1a2e22] placeholder-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-200"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-7 py-3 bg-white/20 text-white text-sm font-black rounded-full hover:bg-white/30 transition-colors disabled:opacity-60"
+                >
+                  {submitting ? 'Joining...' : 'Notify Me'}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 
