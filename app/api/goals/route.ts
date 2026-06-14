@@ -7,12 +7,12 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabase
-    .from('subscriptions')
+    .from('goals')
     .select('*')
-    .order('next_renewal_date', { ascending: true })
+    .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscriptions: data })
+  return NextResponse.json({ goals: data })
 }
 
 export async function POST(req: NextRequest) {
@@ -21,30 +21,24 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { name, amount, billing_cycle, next_renewal_date, category, cancel_url, notes, item_type, is_trial, trial_ends_at } = body
+  const { name, target_amount, current_amount, target_date } = body
 
-  if (!name || !next_renewal_date) {
-    return NextResponse.json({ error: 'Name and next renewal date are required' }, { status: 400 })
+  if (!name || target_amount === undefined) {
+    return NextResponse.json({ error: 'name and target_amount are required' }, { status: 400 })
   }
 
   const { data, error } = await supabase
-    .from('subscriptions')
+    .from('goals')
     .insert({
       user_id: user.id,
       name,
-      amount: amount ?? 0,
-      billing_cycle: billing_cycle ?? 'monthly',
-      next_renewal_date,
-      category: category ?? 'other',
-      cancel_url: cancel_url ?? null,
-      notes: notes ?? null,
-      item_type: item_type ?? 'subscription',
-      is_trial: is_trial ?? false,
-      trial_ends_at: trial_ends_at ?? null,
+      target_amount,
+      current_amount: current_amount ?? 0,
+      target_date: target_date || null,
     })
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscription: data })
+  return NextResponse.json({ goal: data })
 }

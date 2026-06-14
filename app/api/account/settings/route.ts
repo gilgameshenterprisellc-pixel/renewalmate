@@ -7,12 +7,13 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabase
-    .from('subscriptions')
+    .from('user_settings')
     .select('*')
-    .order('next_renewal_date', { ascending: true })
+    .eq('user_id', user.id)
+    .maybeSingle()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscriptions: data })
+  return NextResponse.json({ settings: data ?? { user_id: user.id, weekly_digest_enabled: true } })
 }
 
 export async function POST(req: NextRequest) {
@@ -21,30 +22,17 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { name, amount, billing_cycle, next_renewal_date, category, cancel_url, notes, item_type, is_trial, trial_ends_at } = body
-
-  if (!name || !next_renewal_date) {
-    return NextResponse.json({ error: 'Name and next renewal date are required' }, { status: 400 })
-  }
+  const { weekly_digest_enabled } = body
 
   const { data, error } = await supabase
-    .from('subscriptions')
-    .insert({
-      user_id: user.id,
-      name,
-      amount: amount ?? 0,
-      billing_cycle: billing_cycle ?? 'monthly',
-      next_renewal_date,
-      category: category ?? 'other',
-      cancel_url: cancel_url ?? null,
-      notes: notes ?? null,
-      item_type: item_type ?? 'subscription',
-      is_trial: is_trial ?? false,
-      trial_ends_at: trial_ends_at ?? null,
-    })
+    .from('user_settings')
+    .upsert(
+      { user_id: user.id, weekly_digest_enabled: weekly_digest_enabled ?? true, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    )
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscription: data })
+  return NextResponse.json({ settings: data })
 }
