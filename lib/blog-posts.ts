@@ -138,7 +138,9 @@ The alternative is manual tracking. Yes, it takes more effort. But here\'s the t
 - People who had a Plaid-connected app breached
 - Anyone whose main goal is tracking recurring bills (not all spending)
 
-RenewalMate is built for manual tracking. No bank sync, no Plaid, no credentials. Add your bills, see your dashboard, stay on top of renewals.`,
+RenewalMate's free plan is built for manual tracking: no bank sync, no Plaid, no credentials. Add your bills, see your dashboard, stay on top of renewals.
+
+If you'd rather have RenewalMate detect recurring charges for you, RenewalMate Plus offers optional Plaid bank sync — same Plaid that powers Rocket Money, Monarch, and YNAB, but here it's opt-in, clearly labeled as a paid feature, and disconnectable anytime from Settings (which immediately revokes access). Manual tracking stays free and fully featured either way — bank sync is a convenience for people who want it, not a requirement.`,
   },
   {
     slug: 'ynab-vs-renewalmate-which-one',

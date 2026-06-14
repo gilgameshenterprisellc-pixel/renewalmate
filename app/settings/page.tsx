@@ -17,6 +17,8 @@ export default async function SettingsPage() {
     <SettingsClient
       userEmail={user.email ?? ''}
       initialDigestEnabled={settings?.weekly_digest_enabled ?? true}
+      plan={settings?.plan ?? 'free'}
+      plaidEnabled={settings?.plaid_enabled ?? false}
     />
   )
 }
