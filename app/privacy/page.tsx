@@ -2,12 +2,12 @@ import Link from 'next/link'
 
 const PRINCIPLES = [
   {
-    title: 'No bank connection, ever',
-    body: 'RenewalMate is manual-entry only. You tell us what you pay and when. We never ask for your bank login, never connect to Plaid or any aggregator on the free tier, and never see your transaction history.',
+    title: 'Manual entry by default — bank sync is optional, and never on the free plan',
+    body: 'RenewalMate works fully with manual entry: you tell us what you pay and when, and we never see your transaction history. On RenewalMate Plus, you can optionally connect a bank account through Plaid to auto-detect recurring charges. It\'s opt-in, clearly labeled as a paid feature, and you can disconnect it anytime from Settings — which immediately revokes our access and deletes the stored connection.',
   },
   {
     title: 'We don\'t sell your data',
-    body: 'Not to advertisers, not to data brokers, not to anyone. We have no investors pushing us to monetize your information, and we never will. Your data pays for nothing but your own dashboard.',
+    body: 'Not to advertisers, not to data brokers, not to anyone. We have no investors pushing us to monetize your information, and we never will. Your data pays for nothing but your own dashboard — including any transaction data from an optional bank connection, which is used only to detect recurring charges and is never shared or sold.',
   },
   {
     title: 'You can leave with everything, anytime',
@@ -19,11 +19,11 @@ const PRINCIPLES = [
   },
   {
     title: 'We collect the minimum',
-    body: 'Your email (for login and optional alerts) and whatever you choose to type into the app. That\'s the entire list. No tracking pixels chasing you around the web, no behavioral profiling.',
+    body: 'Your email (for login and optional alerts) and whatever you choose to type into the app — plus, if you opt into bank sync on Plus, the transaction data needed to detect recurring charges. That\'s the entire list. No tracking pixels chasing you around the web, no behavioral profiling.',
   },
   {
-    title: 'Free means free — not "free until we need your data"',
-    body: 'RenewalMate\'s free tier is funded by keeping costs near zero, not by turning you into the product. If a future feature requires a cost-incurring service (like bank sync or AI), it will be clearly optional, clearly labeled, and never required to use the core app.',
+    title: 'Paid features are optional, clearly labeled, and never required',
+    body: 'RenewalMate\'s free tier is funded by keeping costs near zero, not by turning you into the product. Features that cost us money to run — like Plaid bank sync and AI-powered insights — are part of RenewalMate Plus, a paid, opt-in upgrade. The core app (manual tracking, budgets, goals, net worth, reminders, data export, account deletion) stays free, full-featured, and always will.',
   },
 ]
 

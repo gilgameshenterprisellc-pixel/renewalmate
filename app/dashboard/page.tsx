@@ -12,5 +12,17 @@ export default async function DashboardPage() {
     .select('*')
     .order('next_renewal_date', { ascending: true })
 
-  return <DashboardClient initialSubscriptions={subscriptions ?? []} userEmail={user.email ?? ''} />
+  const { data: settings } = await supabase
+    .from('user_settings')
+    .select('plan')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  return (
+    <DashboardClient
+      initialSubscriptions={subscriptions ?? []}
+      userEmail={user.email ?? ''}
+      plan={settings?.plan ?? 'free'}
+    />
+  )
 }

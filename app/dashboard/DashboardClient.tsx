@@ -1,5 +1,6 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import Link from 'next/link'
 import AppNav from '@/components/AppNav'
 
 interface Subscription {
@@ -80,9 +81,11 @@ const emptyForm: {
 export default function DashboardClient({
   initialSubscriptions,
   userEmail,
+  plan,
 }: {
   initialSubscriptions: Subscription[]
   userEmail: string
+  plan: 'free' | 'plus'
 }) {
   const [subs, setSubs] = useState<Subscription[]>(initialSubscriptions)
   const [showForm, setShowForm] = useState(false)
@@ -91,6 +94,35 @@ export default function DashboardClient({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<'all' | 'subscription' | 'bill' | 'license' | 'one_time'>('all')
+  const [insight, setInsight] = useState<{ content: string; generated_at: string } | null>(null)
+  const [insightLoading, setInsightLoading] = useState(false)
+  const [insightError, setInsightError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (plan !== 'plus') return
+    fetch('/api/insights')
+      .then((res) => res.json())
+      .then((json) => setInsight(json.insight ?? null))
+      .catch(() => {})
+  }, [plan])
+
+  async function handleGenerateInsights() {
+    setInsightLoading(true)
+    setInsightError(null)
+    try {
+      const res = await fetch('/api/insights', { method: 'POST' })
+      const json = await res.json()
+      if (!res.ok) {
+        setInsightError(json.error || 'Something went wrong. Please try again.')
+        return
+      }
+      setInsight(json.insight)
+    } catch {
+      setInsightError('Something went wrong. Please try again.')
+    } finally {
+      setInsightLoading(false)
+    }
+  }
 
   const stats = useMemo(() => {
     const recurring = subs.filter((s) => s.billing_cycle !== 'one_time')
@@ -214,6 +246,50 @@ export default function DashboardClient({
         {stats.trialsEndingSoon.length > 0 && (
           <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-3 mb-6 text-sm text-orange-800 font-medium">
             ⏰ {stats.trialsEndingSoon.map((s) => s.name).join(', ')} — free trial ending within 2 days. Cancel now if you don&apos;t want to be charged.
+          </div>
+        )}
+
+        {/* AI INSIGHTS */}
+        {plan === 'plus' ? (
+          <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-sm font-black text-[#1a2e22]">AI Insights</h2>
+              <button
+                onClick={handleGenerateInsights}
+                disabled={insightLoading}
+                className="px-3 py-1.5 rounded-lg bg-[#1e7a4a] text-white text-xs font-bold hover:bg-[#166038] transition-colors disabled:opacity-60"
+              >
+                {insightLoading ? 'Thinking...' : insight ? 'Refresh insights' : 'Generate insights'}
+              </button>
+            </div>
+            {insightError && <p className="text-xs text-red-500 font-bold mt-2">{insightError}</p>}
+            {insight ? (
+              <>
+                <p className="text-sm text-gray-600 whitespace-pre-line mt-2">{insight.content}</p>
+                <p className="text-xs text-gray-400 mt-3">
+                  Generated {new Date(insight.generated_at).toLocaleString()}
+                </p>
+              </>
+            ) : (
+              !insightError && (
+                <p className="text-xs text-gray-400 mt-2">
+                  Get AI-powered tips on where you might be overspending or what to cancel.
+                </p>
+              )
+            )}
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6">
+            <h2 className="text-sm font-black text-[#1a2e22] mb-1">AI Insights</h2>
+            <p className="text-xs text-gray-400 mb-3">
+              Get AI-powered tips on what to cancel, what&apos;s overlapping, and where you could save. Available on RenewalMate Plus.
+            </p>
+            <Link
+              href="/settings"
+              className="inline-block px-4 py-2 rounded-lg bg-[#1e7a4a] text-white text-sm font-bold hover:bg-[#166038] transition-colors"
+            >
+              Upgrade to Plus
+            </Link>
           </div>
         )}
 
