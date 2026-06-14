@@ -7,12 +7,12 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabase
-    .from('subscriptions')
+    .from('budget_categories')
     .select('*')
-    .order('next_renewal_date', { ascending: true })
+    .order('category', { ascending: true })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscriptions: data })
+  return NextResponse.json({ budgets: data })
 }
 
 export async function POST(req: NextRequest) {
@@ -21,30 +21,19 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { name, amount, billing_cycle, next_renewal_date, category, cancel_url, notes, item_type, is_trial, trial_ends_at } = body
+  const { category, monthly_cap } = body
 
-  if (!name || !next_renewal_date) {
-    return NextResponse.json({ error: 'Name and next renewal date are required' }, { status: 400 })
-  }
+  if (!category) return NextResponse.json({ error: 'Category is required' }, { status: 400 })
 
   const { data, error } = await supabase
-    .from('subscriptions')
-    .insert({
-      user_id: user.id,
-      name,
-      amount: amount ?? 0,
-      billing_cycle: billing_cycle ?? 'monthly',
-      next_renewal_date,
-      category: category ?? 'other',
-      cancel_url: cancel_url ?? null,
-      notes: notes ?? null,
-      item_type: item_type ?? 'subscription',
-      is_trial: is_trial ?? false,
-      trial_ends_at: trial_ends_at ?? null,
-    })
+    .from('budget_categories')
+    .upsert(
+      { user_id: user.id, category, monthly_cap: monthly_cap ?? 0, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id,category' }
+    )
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ subscription: data })
+  return NextResponse.json({ budget: data })
 }

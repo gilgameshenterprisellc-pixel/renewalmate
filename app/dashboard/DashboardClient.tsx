@@ -1,18 +1,19 @@
 'use client'
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import AppNav from '@/components/AppNav'
 
 interface Subscription {
   id: string
   name: string
   amount: number
-  billing_cycle: 'weekly' | 'monthly' | 'yearly'
+  billing_cycle: 'weekly' | 'monthly' | 'yearly' | 'one_time'
   next_renewal_date: string
   category: string
   cancel_url: string | null
   notes: string | null
+  item_type: 'subscription' | 'bill' | 'license' | 'one_time'
+  is_trial: boolean
+  trial_ends_at: string | null
 }
 
 const CATEGORIES: Record<string, { label: string; icon: string }> = {
@@ -24,15 +25,24 @@ const CATEGORIES: Record<string, { label: string; icon: string }> = {
   other: { label: 'Other', icon: '📦' },
 }
 
+const ITEM_TYPES: Record<string, { label: string; icon: string }> = {
+  subscription: { label: 'Subscription', icon: '🔁' },
+  bill: { label: 'Bill', icon: '🧾' },
+  license: { label: 'License / Renewal', icon: '📄' },
+  one_time: { label: 'One-time expense', icon: '🏷️' },
+}
+
 const CYCLE_LABEL: Record<string, string> = {
   weekly: '/week',
   monthly: '/month',
   yearly: '/year',
+  one_time: 'one-time',
 }
 
 function toMonthly(amount: number, cycle: string) {
   if (cycle === 'weekly') return amount * 4.33
   if (cycle === 'yearly') return amount / 12
+  if (cycle === 'one_time') return 0
   return amount
 }
 
@@ -46,11 +56,14 @@ function daysUntil(dateStr: string) {
 const emptyForm: {
   name: string
   amount: string
-  billing_cycle: 'weekly' | 'monthly' | 'yearly'
+  billing_cycle: 'weekly' | 'monthly' | 'yearly' | 'one_time'
   next_renewal_date: string
   category: string
   cancel_url: string
   notes: string
+  item_type: 'subscription' | 'bill' | 'license' | 'one_time'
+  is_trial: boolean
+  trial_ends_at: string
 } = {
   name: '',
   amount: '',
@@ -59,6 +72,9 @@ const emptyForm: {
   category: 'other',
   cancel_url: '',
   notes: '',
+  item_type: 'subscription',
+  is_trial: false,
+  trial_ends_at: '',
 }
 
 export default function DashboardClient({
@@ -68,23 +84,34 @@ export default function DashboardClient({
   initialSubscriptions: Subscription[]
   userEmail: string
 }) {
-  const router = useRouter()
   const [subs, setSubs] = useState<Subscription[]>(initialSubscriptions)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [filter, setFilter] = useState<'all' | 'subscription' | 'bill' | 'license' | 'one_time'>('all')
 
   const stats = useMemo(() => {
-    const monthlyTotal = subs.reduce((sum, s) => sum + toMonthly(Number(s.amount), s.billing_cycle), 0)
+    const recurring = subs.filter((s) => s.billing_cycle !== 'one_time')
+    const monthlyTotal = recurring.reduce((sum, s) => sum + toMonthly(Number(s.amount), s.billing_cycle), 0)
     const upcoming = subs.filter((s) => {
       const d = daysUntil(s.next_renewal_date)
       return d >= 0 && d <= 7
     })
     const overdue = subs.filter((s) => daysUntil(s.next_renewal_date) < 0)
-    return { monthlyTotal, yearlyTotal: monthlyTotal * 12, upcoming, overdue }
+    const trialsEndingSoon = subs.filter((s) => {
+      if (!s.is_trial || !s.trial_ends_at) return false
+      const d = daysUntil(s.trial_ends_at)
+      return d >= 0 && d <= 2
+    })
+    return { monthlyTotal, yearlyTotal: monthlyTotal * 12, upcoming, overdue, trialsEndingSoon }
   }, [subs])
+
+  const visibleSubs = useMemo(() => {
+    if (filter === 'all') return subs
+    return subs.filter((s) => s.item_type === filter)
+  }, [subs, filter])
 
   function openAdd() {
     setForm(emptyForm)
@@ -102,6 +129,9 @@ export default function DashboardClient({
       category: s.category,
       cancel_url: s.cancel_url ?? '',
       notes: s.notes ?? '',
+      item_type: s.item_type ?? 'subscription',
+      is_trial: s.is_trial ?? false,
+      trial_ends_at: s.trial_ends_at ?? '',
     })
     setEditingId(s.id)
     setError('')
@@ -121,6 +151,9 @@ export default function DashboardClient({
       category: form.category,
       cancel_url: form.cancel_url.trim() || null,
       notes: form.notes.trim() || null,
+      item_type: form.item_type,
+      is_trial: form.is_trial,
+      trial_ends_at: form.is_trial ? (form.trial_ends_at || null) : null,
     }
 
     try {
@@ -146,47 +179,24 @@ export default function DashboardClient({
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Remove this subscription?')) return
+    if (!confirm('Remove this item?')) return
     const res = await fetch(`/api/subscriptions/${id}`, { method: 'DELETE' })
     if (res.ok) setSubs((prev) => prev.filter((s) => s.id !== id))
   }
 
-  async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
-  }
-
   return (
     <div className="min-h-screen bg-[#f8faf9]">
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">R</span>
-            </div>
-            <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-400 hidden sm:inline">{userEmail}</span>
-            <button onClick={handleLogout} className="text-xs font-bold text-gray-500 hover:text-[#1e7a4a] transition-colors">
-              Log out
-            </button>
-          </div>
-        </div>
-      </nav>
+      <AppNav userEmail={userEmail} />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         {/* SUMMARY */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Monthly total</div>
+            <div className="text-xs font-bold text-gray-400 mb-1">Monthly total (recurring)</div>
             <div className="text-2xl font-black text-[#1a2e22]">${stats.monthlyTotal.toFixed(2)}</div>
           </div>
           <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Yearly total</div>
+            <div className="text-xs font-bold text-gray-400 mb-1">Yearly total (recurring)</div>
             <div className="text-2xl font-black text-[#1a2e22]">${stats.yearlyTotal.toFixed(2)}</div>
           </div>
           <div className="bg-white border border-gray-100 rounded-2xl p-5">
@@ -196,38 +206,60 @@ export default function DashboardClient({
         </div>
 
         {stats.overdue.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3 mb-6 text-sm text-amber-800 font-medium">
-            {stats.overdue.length} subscription{stats.overdue.length > 1 ? 's' : ''} past its renewal date, update or remove below.
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3 mb-3 text-sm text-amber-800 font-medium">
+            {stats.overdue.length} item{stats.overdue.length > 1 ? 's' : ''} past its due date, update or remove below.
+          </div>
+        )}
+
+        {stats.trialsEndingSoon.length > 0 && (
+          <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-3 mb-6 text-sm text-orange-800 font-medium">
+            ⏰ {stats.trialsEndingSoon.map((s) => s.name).join(', ')} — free trial ending within 2 days. Cancel now if you don&apos;t want to be charged.
           </div>
         )}
 
         {/* HEADER */}
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-black text-[#1a2e22]">Your subscriptions</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h1 className="text-xl font-black text-[#1a2e22]">Bills & subscriptions</h1>
           <button
             onClick={openAdd}
             className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors"
           >
-            + Add subscription
+            + Add item
           </button>
         </div>
 
+        {/* FILTER TABS */}
+        <div className="flex items-center gap-2 mb-4 overflow-x-auto">
+          {(['all', 'subscription', 'bill', 'license', 'one_time'] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
+                filter === f ? 'bg-[#1e7a4a] text-white' : 'bg-white border border-gray-200 text-gray-500 hover:text-[#1e7a4a]'
+              }`}
+            >
+              {f === 'all' ? 'All' : ITEM_TYPES[f].icon + ' ' + ITEM_TYPES[f].label}
+            </button>
+          ))}
+        </div>
+
         {/* LIST */}
-        {subs.length === 0 ? (
+        {visibleSubs.length === 0 ? (
           <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center">
             <div className="text-3xl mb-3">🗂️</div>
-            <p className="text-gray-500 text-sm mb-4">No subscriptions yet. Add your first one to start tracking.</p>
+            <p className="text-gray-500 text-sm mb-4">Nothing here yet. Add a subscription, bill, license, or one-time expense to start tracking.</p>
             <button
               onClick={openAdd}
               className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors"
             >
-              + Add subscription
+              + Add item
             </button>
           </div>
         ) : (
           <div className="space-y-2">
-            {subs.map((s) => {
+            {visibleSubs.map((s) => {
               const cat = CATEGORIES[s.category] ?? CATEGORIES.other
+              const itemType = ITEM_TYPES[s.item_type] ?? ITEM_TYPES.subscription
               const days = daysUntil(s.next_renewal_date)
               let dueLabel = `in ${days} days`
               let dueColor = 'text-gray-400'
@@ -240,6 +272,7 @@ export default function DashboardClient({
               } else if (days <= 7) {
                 dueColor = 'text-amber-600'
               }
+              const dueWord = s.billing_cycle === 'one_time' ? 'Due' : 'Renews'
 
               return (
                 <div key={s.id} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4">
@@ -247,8 +280,15 @@ export default function DashboardClient({
                     {cat.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-[#1a2e22] text-sm truncate">{s.name}</div>
-                    <div className="text-xs text-gray-400">{cat.label} · Renews {dueLabel.startsWith('in') || dueLabel === 'today' ? <span className={dueColor}>{dueLabel}</span> : <span className={dueColor}>{dueLabel}</span>}</div>
+                    <div className="font-bold text-[#1a2e22] text-sm truncate flex items-center gap-2">
+                      {s.name}
+                      {s.is_trial && (
+                        <span className="text-[10px] font-bold uppercase tracking-wide bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Trial</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {itemType.icon} {itemType.label} · {cat.label} · {dueWord} <span className={dueColor}>{dueLabel}</span>
+                    </div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="font-black text-[#1a2e22] text-sm">${Number(s.amount).toFixed(2)}</div>
@@ -281,12 +321,24 @@ export default function DashboardClient({
 
       {/* ADD/EDIT MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center px-6 z-50" onClick={() => setShowForm(false)}>
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center px-6 z-50 overflow-y-auto py-10" onClick={() => setShowForm(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-black text-[#1a2e22] mb-4">
-              {editingId ? 'Edit subscription' : 'Add subscription'}
+              {editingId ? 'Edit item' : 'Add item'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1.5">Type</label>
+                <select
+                  value={form.item_type}
+                  onChange={(e) => setForm({ ...form, item_type: e.target.value as typeof form.item_type })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                >
+                  {Object.entries(ITEM_TYPES).map(([key, t]) => (
+                    <option key={key} value={key}>{t.icon} {t.label}</option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 mb-1.5">Name</label>
                 <input
@@ -294,7 +346,7 @@ export default function DashboardClient({
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
-                  placeholder="Netflix, Gym, Car insurance..."
+                  placeholder="Netflix, Gym, Car insurance, Driver's license..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -321,12 +373,13 @@ export default function DashboardClient({
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
+                    <option value="one_time">One-time</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1.5">Next renewal</label>
+                  <label className="block text-xs font-bold text-gray-500 mb-1.5">{form.billing_cycle === 'one_time' ? 'Due date' : 'Next renewal'}</label>
                   <input
                     required
                     type="date"
@@ -348,6 +401,28 @@ export default function DashboardClient({
                   </select>
                 </div>
               </div>
+
+              {form.item_type === 'subscription' && (
+                <div className="flex items-center gap-2 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3">
+                  <input
+                    type="checkbox"
+                    id="is_trial"
+                    checked={form.is_trial}
+                    onChange={(e) => setForm({ ...form, is_trial: e.target.checked })}
+                    className="w-4 h-4 accent-[#1e7a4a]"
+                  />
+                  <label htmlFor="is_trial" className="text-xs font-bold text-orange-800 flex-1">This is a free trial</label>
+                  {form.is_trial && (
+                    <input
+                      type="date"
+                      value={form.trial_ends_at}
+                      onChange={(e) => setForm({ ...form, trial_ends_at: e.target.value })}
+                      className="px-2 py-1.5 rounded-lg border border-orange-200 text-xs focus:outline-none"
+                    />
+                  )}
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-bold text-gray-500 mb-1.5">Cancel link (optional)</label>
                 <input
@@ -376,7 +451,7 @@ export default function DashboardClient({
                   disabled={saving}
                   className="flex-1 py-2.5 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors disabled:opacity-60"
                 >
-                  {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add subscription'}
+                  {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add item'}
                 </button>
                 <button
                   type="button"

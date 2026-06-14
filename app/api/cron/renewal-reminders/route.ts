@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import webpush from 'web-push'
 
 const REMINDER_WINDOW_DAYS = 3
 
@@ -120,6 +121,8 @@ export async function GET(req: NextRequest) {
           .eq('id', s.id)
       }
 
+      await sendPushReminder(supabase, userId, userSubs)
+
       sent++
     } catch (e) {
       errors.push(`Error sending to ${userData.user.email}: ${e instanceof Error ? e.message : 'unknown'}`)
@@ -127,4 +130,46 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ sent, usersChecked: byUser.size, errors })
+}
+
+async function sendPushReminder(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  userSubs: { name: string; next_renewal_date: string }[]
+) {
+  if (!process.env.VAPID_PRIVATE_KEY || !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return
+
+  try {
+    const { data: sub } = await supabase
+      .from('push_subscriptions')
+      .select('endpoint, p256dh, auth_key')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (!sub) return
+
+    webpush.setVapidDetails(
+      process.env.VAPID_SUBJECT || 'mailto:hello@renewalmate.com',
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+      process.env.VAPID_PRIVATE_KEY
+    )
+
+    const title = userSubs.length === 1
+      ? `${userSubs[0].name} renews soon`
+      : `${userSubs.length} renewals coming up`
+    const body = userSubs.length === 1
+      ? `Renews ${formatDate(userSubs[0].next_renewal_date)}`
+      : userSubs.map(s => s.name).join(', ')
+
+    await webpush.sendNotification(
+      { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth_key } },
+      JSON.stringify({ title, body, url: '/dashboard', tag: 'renewalmate-reminder' })
+    )
+  } catch (err) {
+    const statusCode = (err as { statusCode?: number })?.statusCode
+    if (statusCode === 410) {
+      await supabase.from('push_subscriptions').delete().eq('user_id', userId)
+    }
+    // non-fatal — email already sent
+  }
 }
