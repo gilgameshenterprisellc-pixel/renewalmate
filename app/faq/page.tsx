@@ -12,7 +12,7 @@ const FAQS = [
       },
       {
         q: 'Is RenewalMate really free?',
-        a: 'Yes. Free forever. No premium tier for the core features. No credit card required. We follow a simple rule: if it doesn\'t cost us anything to run, it\'s free for you.',
+        a: 'Mostly, yes. Manual tracking — subscriptions, bills, budgets, net worth, and goals — is free forever, no credit card required. We follow one rule: if a feature doesn\'t cost us anything to run, it\'s free for you, forever. The only paid tier, RenewalMate Plus, covers features that do cost us money to run (Plaid bank sync, AI-powered insights), and it\'s entirely optional.',
       },
       {
         q: 'Who built RenewalMate?',
@@ -29,7 +29,7 @@ const FAQS = [
     questions: [
       {
         q: 'Do I have to connect my bank account?',
-        a: 'No. Never. RenewalMate is manual entry only. You add your bills yourself. Your bank credentials never touch our servers. Privacy first - always.',
+        a: 'No. RenewalMate works fully manual entry by default - you add your bills yourself, and your bank credentials never touch our servers. If you want, RenewalMate Plus offers optional Plaid bank sync for automatic detection, but it is entirely opt-in and disconnectable anytime.',
       },
       {
         q: 'What does the dashboard show?',
