@@ -21,20 +21,23 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   async function handleWaitlist(e: React.FormEvent) {
     e.preventDefault()
     if (!email.trim()) return
     setSubmitting(true)
+    setSubmitError('')
     try {
-      await fetch('/api/waitlist', {
+      const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() }),
       })
+      if (!res.ok) throw new Error('server error')
       setSubmitted(true)
     } catch {
-      setSubmitted(true)
+      setSubmitError('Something went wrong — please try again or email renewalmate.updates@gmail.com.')
     } finally {
       setSubmitting(false)
     }
@@ -167,6 +170,9 @@ export default function Home() {
                 {submitting ? 'Joining...' : 'Join Waitlist →'}
               </button>
             </form>
+          )}
+          {submitError && (
+            <p className="text-red-200 text-sm mt-3">{submitError}</p>
           )}
           <p className="text-green-200/60 text-xs mt-4">No spam. Unsubscribe anytime.</p>
         </div>
