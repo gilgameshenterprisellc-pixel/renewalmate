@@ -5,7 +5,7 @@ const BASE = 'https://www.renewalmate.com'
 
 const VS_PAGES = [
   'rocket-money', 'monarch-money', 'ynab', 'copilot', 'pocketguard',
-  'simplifi', 'mint', 'lowermysubs', 'resubscribe', 'tilla',
+  'simplifi', 'mint', 'lowermysubs', 'tilla',
 ]
 
 export default function sitemap(): MetadataRoute.Sitemap {
