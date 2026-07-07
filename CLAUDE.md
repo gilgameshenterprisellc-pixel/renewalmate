@@ -35,7 +35,16 @@ A "Finance OS" — subscription/bill tracker that's expanding into a full person
 ## Two-Phase Build Plan
 
 **Phase 1 — Everything free to users.** ✅ COMPLETE (merged PR #10, June 13, 2026).
-**Phase 2 — Things that cost money, gated behind a paid tier ("RenewalMate Plus").** ✅ Built June 14, 2026 — pending migration run + env vars + PR merge.
+**Phase 2 — Things that cost money, gated behind a paid tier ("RenewalMate Plus").** ✅ MERGED (PR #11 June 2026, copy accuracy fix PR #12). Verify migrations ran + Stripe/Plaid/Gemini env vars set in Vercel before announcing Plus.
+
+---
+
+## Current State (July 7, 2026)
+
+- **Merged:** PR #10 (Finance OS Phase 1), PR #11 (RenewalMate Plus — Stripe tier, Plaid bank sync, Gemini AI insights), PR #12 ("free forever" copy corrected now that Plus exists).
+- **June 19 waitlist data-loss fix** — `app/api/waitlist/route.ts` was logging + returning success without saving; now emails `renewalmate.updates@gmail.com` via Resend. Landed as direct commit `609b907`.
+- **⚠️ TWO LOCAL CLONES, TWO REMOTES.** `C:/Users/jbost/renewalmate` pushes to `renewalmateupdates/renewalmate`; `C:/Users/jbost/renewalmate-backend` pushes to `gilgameshenterprisellc-pixel/renewalmate`. As of July 7 both remotes are in sync at `609b907`, but the `C:/Users/jbost/renewalmate` clone has a stale unresolved merge conflict in its index (`package.json` + `package-lock.json` marked UU) — resolve or `git checkout -- .` / re-clone before working there. Confirm which repo Vercel actually deploys renewalmate.com from before pushing, and keep both remotes in sync (or retire one) to avoid split-brain history.
+- **Unverified:** whether `20260614000001_renewalmate_plus.sql` + `20260614000002_ai_insights.sql` were run in Supabase, and whether the Phase 2 env vars are set in Vercel (routes degrade to 503 without them).
 
 ---
 
