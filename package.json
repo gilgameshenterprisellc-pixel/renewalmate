@@ -17,6 +17,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-plaid-link": "^4.1.1",
+    "resend": "^6.28.0",
     "stripe": "^22.2.1",
     "web-push": "^3.6.7"
   },
