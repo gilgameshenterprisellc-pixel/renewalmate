@@ -1,15 +1,8 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Fraunces, Manrope, IBM_Plex_Mono } from 'next/font/google'
 import EmberField from '@/components/EmberField'
-
-const fraunces = Fraunces({ subsets: ['latin'], weight: ['500', '600'], style: ['normal', 'italic'], variable: '--font-display' })
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-body' })
-const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono' })
-
-const display = 'font-[family-name:var(--font-display)]'
-const mono = 'font-[family-name:var(--font-mono)] [font-variant-numeric:tabular-nums]'
+import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
 function Check() {
   return (
@@ -117,7 +110,7 @@ export default function Home() {
   }
 
   return (
-    <div className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
       <EmberField />
 
       {/* NAV */}
