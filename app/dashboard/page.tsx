@@ -7,16 +7,18 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: subscriptions } = await supabase
+  const { data: subscriptions, error: subsError } = await supabase
     .from('subscriptions')
     .select('*')
     .order('next_renewal_date', { ascending: true })
+  if (subsError) console.error('dashboard: failed to load subscriptions', subsError)
 
-  const { data: settings } = await supabase
+  const { data: settings, error: settingsError } = await supabase
     .from('user_settings')
     .select('plan')
     .eq('user_id', user.id)
     .maybeSingle()
+  if (settingsError) console.error('dashboard: failed to load user_settings', settingsError)
 
   return (
     <DashboardClient
