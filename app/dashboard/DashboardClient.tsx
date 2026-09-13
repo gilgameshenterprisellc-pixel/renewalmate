@@ -1,7 +1,8 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
-import AppNav from '@/components/AppNav'
+import AppNavDark from '@/components/AppNavDark'
+import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
 interface Subscription {
   id: string
@@ -53,6 +54,10 @@ function daysUntil(dateStr: string) {
   const target = new Date(dateStr + 'T00:00:00')
   return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 }
+
+const inputCls =
+  'w-full px-4 py-2.5 rounded-xl bg-void border border-edge-lit text-ink-high placeholder-ink-faint text-sm focus:outline-none focus:ring-2 focus:ring-violet/40 focus:border-violet'
+const labelCls = 'block text-xs font-bold text-ink-muted mb-1.5'
 
 const emptyForm: {
   name: string
@@ -217,76 +222,76 @@ export default function DashboardClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <AppNav userEmail={userEmail} />
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <AppNavDark userEmail={userEmail} />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         {/* SUMMARY */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Monthly total (recurring)</div>
-            <div className="text-2xl font-black text-[#1a2e22]">${stats.monthlyTotal.toFixed(2)}</div>
+          <div className="bg-panel border border-edge rounded-2xl p-5">
+            <div className="text-xs font-bold text-ink-muted mb-1">Monthly total (recurring)</div>
+            <div className={`${mono} text-2xl font-semibold text-ink-high`}>${stats.monthlyTotal.toFixed(2)}</div>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Yearly total (recurring)</div>
-            <div className="text-2xl font-black text-[#1a2e22]">${stats.yearlyTotal.toFixed(2)}</div>
+          <div className="bg-panel border border-edge rounded-2xl p-5">
+            <div className="text-xs font-bold text-ink-muted mb-1">Yearly total (recurring)</div>
+            <div className={`${mono} text-2xl font-semibold text-ink-high`}>${stats.yearlyTotal.toFixed(2)}</div>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Due in next 7 days</div>
-            <div className="text-2xl font-black text-[#1a2e22]">{stats.upcoming.length}</div>
+          <div className="bg-panel border border-edge rounded-2xl p-5">
+            <div className="text-xs font-bold text-ink-muted mb-1">Due in next 7 days</div>
+            <div className={`${mono} text-2xl font-semibold text-ink-high`}>{stats.upcoming.length}</div>
           </div>
         </div>
 
         {stats.overdue.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3 mb-3 text-sm text-amber-800 font-medium">
+          <div className="bg-rm-red/10 border border-rm-red/30 rounded-2xl px-5 py-3 mb-3 text-sm text-rm-red-bright font-medium">
             {stats.overdue.length} item{stats.overdue.length > 1 ? 's' : ''} past its due date, update or remove below.
           </div>
         )}
 
         {stats.trialsEndingSoon.length > 0 && (
-          <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-3 mb-6 text-sm text-orange-800 font-medium">
+          <div className="bg-rm-amber/10 border border-rm-amber/30 rounded-2xl px-5 py-3 mb-6 text-sm text-rm-amber-bright font-medium">
             ⏰ {stats.trialsEndingSoon.map((s) => s.name).join(', ')} — free trial ending within 2 days. Cancel now if you don&apos;t want to be charged.
           </div>
         )}
 
         {/* AI INSIGHTS */}
         {plan === 'plus' ? (
-          <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6">
+          <div className="bg-panel border border-edge rounded-2xl p-5 mb-6">
             <div className="flex items-center justify-between mb-1">
-              <h2 className="text-sm font-black text-[#1a2e22]">AI Insights</h2>
+              <h2 className={`${display} font-semibold text-sm text-ink-high`}>AI Insights</h2>
               <button
                 onClick={handleGenerateInsights}
                 disabled={insightLoading}
-                className="px-3 py-1.5 rounded-lg bg-[#1e7a4a] text-white text-xs font-bold hover:bg-[#166038] transition-colors disabled:opacity-60"
+                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold shadow-[0_6px_16px_-6px_rgba(139,92,246,0.55)] disabled:opacity-60"
               >
                 {insightLoading ? 'Thinking...' : insight ? 'Refresh insights' : 'Generate insights'}
               </button>
             </div>
-            {insightError && <p className="text-xs text-red-500 font-bold mt-2">{insightError}</p>}
+            {insightError && <p className="text-xs text-rm-red-bright font-bold mt-2">{insightError}</p>}
             {insight ? (
               <>
-                <p className="text-sm text-gray-600 whitespace-pre-line mt-2">{insight.content}</p>
-                <p className="text-xs text-gray-400 mt-3">
+                <p className="text-sm text-ink-body whitespace-pre-line mt-2">{insight.content}</p>
+                <p className="text-xs text-ink-faint mt-3">
                   Generated {new Date(insight.generated_at).toLocaleString()}
                 </p>
               </>
             ) : (
               !insightError && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-ink-muted mt-2">
                   Get AI-powered tips on where you might be overspending or what to cancel.
                 </p>
               )
             )}
           </div>
         ) : (
-          <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-6">
-            <h2 className="text-sm font-black text-[#1a2e22] mb-1">AI Insights</h2>
-            <p className="text-xs text-gray-400 mb-3">
+          <div className="bg-panel border border-edge rounded-2xl p-5 mb-6">
+            <h2 className={`${display} font-semibold text-sm text-ink-high mb-1`}>AI Insights</h2>
+            <p className="text-xs text-ink-muted mb-3">
               Get AI-powered tips on what to cancel, what&apos;s overlapping, and where you could save. Available on RenewalMate Plus.
             </p>
             <Link
               href="/settings"
-              className="inline-block px-4 py-2 rounded-lg bg-[#1e7a4a] text-white text-sm font-bold hover:bg-[#166038] transition-colors"
+              className="inline-block px-4 py-2 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold shadow-[0_6px_16px_-6px_rgba(139,92,246,0.55)]"
             >
               Upgrade to Plus
             </Link>
@@ -295,10 +300,10 @@ export default function DashboardClient({
 
         {/* HEADER */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h1 className="text-xl font-black text-[#1a2e22]">Bills & subscriptions</h1>
+          <h1 className={`${display} font-semibold text-xl text-ink-high`}>Bills & subscriptions</h1>
           <button
             onClick={openAdd}
-            className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors"
+            className="px-5 py-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_10px_28px_-6px_rgba(139,92,246,0.7)] transition-shadow"
           >
             + Add item
           </button>
@@ -311,7 +316,7 @@ export default function DashboardClient({
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
-                filter === f ? 'bg-[#1e7a4a] text-white' : 'bg-white border border-gray-200 text-gray-500 hover:text-[#1e7a4a]'
+                filter === f ? 'bg-violet text-white' : 'bg-panel border border-edge-lit text-ink-muted hover:text-violet-bright'
               }`}
             >
               {f === 'all' ? 'All' : ITEM_TYPES[f].icon + ' ' + ITEM_TYPES[f].label}
@@ -321,12 +326,12 @@ export default function DashboardClient({
 
         {/* LIST */}
         {visibleSubs.length === 0 ? (
-          <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center">
+          <div className="bg-panel border border-edge rounded-2xl p-12 text-center">
             <div className="text-3xl mb-3">🗂️</div>
-            <p className="text-gray-500 text-sm mb-4">Nothing here yet. Add a subscription, bill, license, or one-time expense to start tracking.</p>
+            <p className="text-ink-muted text-sm mb-4">Nothing here yet. Add a subscription, bill, license, or one-time expense to start tracking.</p>
             <button
               onClick={openAdd}
-              className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors"
+              className="px-5 py-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)]"
             >
               + Add item
             </button>
@@ -338,37 +343,37 @@ export default function DashboardClient({
               const itemType = ITEM_TYPES[s.item_type] ?? ITEM_TYPES.subscription
               const days = daysUntil(s.next_renewal_date)
               let dueLabel = `in ${days} days`
-              let dueColor = 'text-gray-400'
+              let dueColor = 'text-ink-faint'
               if (days < 0) {
                 dueLabel = `${Math.abs(days)} days overdue`
-                dueColor = 'text-red-500'
+                dueColor = 'text-rm-red-bright'
               } else if (days === 0) {
                 dueLabel = 'today'
-                dueColor = 'text-amber-600'
+                dueColor = 'text-rm-amber-bright'
               } else if (days <= 7) {
-                dueColor = 'text-amber-600'
+                dueColor = 'text-rm-amber-bright'
               }
               const dueWord = s.billing_cycle === 'one_time' ? 'Due' : 'Renews'
 
               return (
-                <div key={s.id} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#1e7a4a]/10 flex items-center justify-center text-lg shrink-0">
+                <div key={s.id} className="bg-panel border border-edge rounded-2xl p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-violet/10 flex items-center justify-center text-lg shrink-0">
                     {cat.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-[#1a2e22] text-sm truncate flex items-center gap-2">
+                    <div className="font-bold text-ink-high text-sm truncate flex items-center gap-2">
                       {s.name}
                       {s.is_trial && (
-                        <span className="text-[10px] font-bold uppercase tracking-wide bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">Trial</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wide bg-rm-amber/15 text-rm-amber-bright border border-rm-amber/30 px-1.5 py-0.5 rounded">Trial</span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-ink-muted">
                       {itemType.icon} {itemType.label} · {cat.label} · {dueWord} <span className={dueColor}>{dueLabel}</span>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="font-black text-[#1a2e22] text-sm">${Number(s.amount).toFixed(2)}</div>
-                    <div className="text-xs text-gray-400">{CYCLE_LABEL[s.billing_cycle]}</div>
+                    <div className={`${mono} font-semibold text-ink-high text-sm`}>${Number(s.amount).toFixed(2)}</div>
+                    <div className="text-xs text-ink-muted">{CYCLE_LABEL[s.billing_cycle]}</div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     {s.cancel_url && (
@@ -376,15 +381,15 @@ export default function DashboardClient({
                         href={s.cancel_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-bold text-gray-400 hover:text-[#1e7a4a] transition-colors"
+                        className="text-xs font-bold text-ink-muted hover:text-violet-bright transition-colors"
                       >
                         Cancel ↗
                       </a>
                     )}
-                    <button onClick={() => openEdit(s)} className="text-xs font-bold text-gray-400 hover:text-[#1e7a4a] transition-colors">
+                    <button onClick={() => openEdit(s)} className="text-xs font-bold text-ink-muted hover:text-violet-bright transition-colors">
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(s.id)} className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors">
+                    <button onClick={() => handleDelete(s.id)} className="text-xs font-bold text-ink-muted hover:text-rm-red-bright transition-colors">
                       Delete
                     </button>
                   </div>
@@ -397,18 +402,18 @@ export default function DashboardClient({
 
       {/* ADD/EDIT MODAL */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center px-6 z-50 overflow-y-auto py-10" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-black text-[#1a2e22] mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-6 z-50 overflow-y-auto py-10" onClick={() => setShowForm(false)}>
+          <div className="bg-panel border border-edge rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h2 className={`${display} font-semibold text-lg text-ink-high mb-4`}>
               {editingId ? 'Edit item' : 'Add item'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1.5">Type</label>
+                <label className={labelCls}>Type</label>
                 <select
                   value={form.item_type}
                   onChange={(e) => setForm({ ...form, item_type: e.target.value as typeof form.item_type })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                 >
                   {Object.entries(ITEM_TYPES).map(([key, t]) => (
                     <option key={key} value={key}>{t.icon} {t.label}</option>
@@ -416,18 +421,18 @@ export default function DashboardClient({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1.5">Name</label>
+                <label className={labelCls}>Name</label>
                 <input
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                   placeholder="Netflix, Gym, Car insurance, Driver's license..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1.5">Amount</label>
+                  <label className={labelCls}>Amount</label>
                   <input
                     required
                     type="number"
@@ -435,16 +440,16 @@ export default function DashboardClient({
                     min="0"
                     value={form.amount}
                     onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                    className={inputCls}
                     placeholder="0.00"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1.5">Billing cycle</label>
+                  <label className={labelCls}>Billing cycle</label>
                   <select
                     value={form.billing_cycle}
                     onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as typeof form.billing_cycle })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                    className={inputCls}
                   >
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
@@ -455,21 +460,21 @@ export default function DashboardClient({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1.5">{form.billing_cycle === 'one_time' ? 'Due date' : 'Next renewal'}</label>
+                  <label className={labelCls}>{form.billing_cycle === 'one_time' ? 'Due date' : 'Next renewal'}</label>
                   <input
                     required
                     type="date"
                     value={form.next_renewal_date}
                     onChange={(e) => setForm({ ...form, next_renewal_date: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                    className={inputCls}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1.5">Category</label>
+                  <label className={labelCls}>Category</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                    className={inputCls}
                   >
                     {Object.entries(CATEGORIES).map(([key, c]) => (
                       <option key={key} value={key}>{c.icon} {c.label}</option>
@@ -479,60 +484,60 @@ export default function DashboardClient({
               </div>
 
               {form.item_type === 'subscription' && (
-                <div className="flex items-center gap-2 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3">
+                <div className="flex items-center gap-2 bg-rm-amber/10 border border-rm-amber/25 rounded-xl px-4 py-3">
                   <input
                     type="checkbox"
                     id="is_trial"
                     checked={form.is_trial}
                     onChange={(e) => setForm({ ...form, is_trial: e.target.checked })}
-                    className="w-4 h-4 accent-[#1e7a4a]"
+                    className="w-4 h-4 accent-violet"
                   />
-                  <label htmlFor="is_trial" className="text-xs font-bold text-orange-800 flex-1">This is a free trial</label>
+                  <label htmlFor="is_trial" className="text-xs font-bold text-rm-amber-bright flex-1">This is a free trial</label>
                   {form.is_trial && (
                     <input
                       type="date"
                       value={form.trial_ends_at}
                       onChange={(e) => setForm({ ...form, trial_ends_at: e.target.value })}
-                      className="px-2 py-1.5 rounded-lg border border-orange-200 text-xs focus:outline-none"
+                      className="px-2 py-1.5 rounded-lg bg-void border border-rm-amber/30 text-ink-high text-xs focus:outline-none"
                     />
                   )}
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1.5">Cancel link (optional)</label>
+                <label className={labelCls}>Cancel link (optional)</label>
                 <input
                   type="url"
                   value={form.cancel_url}
                   onChange={(e) => setForm({ ...form, cancel_url: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                   placeholder="https://..."
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1.5">Notes (optional)</label>
+                <label className={labelCls}>Notes (optional)</label>
                 <textarea
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                   rows={2}
                 />
               </div>
 
-              {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+              {error && <p className="text-xs text-rm-red-bright font-medium">{error}</p>}
 
               <div className="flex items-center gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2.5 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors disabled:opacity-60"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] disabled:opacity-60"
                 >
                   {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add item'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-[#1a2e22] transition-colors"
+                  className="px-5 py-2.5 text-sm font-bold text-ink-muted hover:text-ink-high transition-colors"
                 >
                   Cancel
                 </button>
