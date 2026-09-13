@@ -1,21 +1,94 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { Fraunces, Manrope, IBM_Plex_Mono } from 'next/font/google'
+import EmberField from '@/components/EmberField'
+
+const fraunces = Fraunces({ subsets: ['latin'], weight: ['500', '600'], style: ['normal', 'italic'], variable: '--font-display' })
+const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-body' })
+const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-mono' })
+
+const display = 'font-[family-name:var(--font-display)]'
+const mono = 'font-[family-name:var(--font-mono)] [font-variant-numeric:tabular-nums]'
+
+function Check() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 mt-0.5 stroke-jade-bright fill-none" strokeWidth={2.4}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  )
+}
 
 const FEATURES = [
-  { icon: '🔔', title: 'Renewal Alerts', desc: 'Get notified before anything renews. Never get surprised by a charge again.' },
-  { icon: '📊', title: 'Full Dashboard', desc: 'See every subscription, bill, and recurring cost in one place. Overdue, due soon, on track.' },
-  { icon: '💸', title: 'Spot the Waste', desc: 'Instantly see what you\'re paying for but not using. Cancel what doesn\'t serve you.' },
-  { icon: '🗂️', title: 'Every Category', desc: 'Entertainment, utilities, insurance, software, gym — all organized automatically.' },
-  { icon: '🔒', title: 'No Bank Sync Required', desc: 'Manual entry by default. Your bank credentials never leave your hands unless you opt in. Privacy first.' },
-  { icon: '✅', title: 'Free Forever', desc: 'Manual tracking is free forever — no credit card, no catch. The only paid tier (RenewalMate Plus) covers features that cost us money to run, like bank sync and AI insights.' },
+  {
+    title: 'Renewal Alerts',
+    desc: 'Get notified before anything renews. Never get surprised by a charge again.',
+    icon: (
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3a5 5 0 0 0-5 5v3.5c0 .9-.4 1.7-1 2.3L5 15h14l-1-1.2c-.6-.6-1-1.4-1-2.3V8a5 5 0 0 0-5-5zM9.5 18a2.5 2.5 0 0 0 5 0" />
+    ),
+  },
+  {
+    title: 'Full Dashboard',
+    desc: 'See every subscription, bill, and recurring cost in one place. Overdue, due soon, on track.',
+    icon: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </>
+    ),
+  },
+  {
+    title: 'Spot the Waste',
+    desc: "Instantly see what you're paying for but not using. Cancel what doesn't serve you.",
+    icon: (
+      <>
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <line strokeLinecap="round" x1="15.3" y1="15.3" x2="20" y2="20" />
+      </>
+    ),
+  },
+  {
+    title: 'Every Category',
+    desc: 'Entertainment, utilities, insurance, software, gym — all organized automatically.',
+    icon: (
+      <>
+        <path strokeLinejoin="round" d="M3 11.5V5a2 2 0 0 1 2-2h6.5a2 2 0 0 1 1.4.6l8 8a2 2 0 0 1 0 2.8l-6.5 6.5a2 2 0 0 1-2.8 0l-8-8A2 2 0 0 1 3 11.5z" />
+        <circle cx="7.5" cy="7.5" r="1.15" fill="currentColor" stroke="none" />
+      </>
+    ),
+  },
+  {
+    title: 'No Bank Sync Required',
+    desc: 'Manual entry by default. Your bank credentials never leave your hands unless you opt in.',
+    icon: <path strokeLinejoin="round" d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />,
+  },
+  {
+    title: 'Free Forever',
+    desc: 'Manual tracking is free forever. The only paid tier covers what actually costs us money to run.',
+    icon: <path strokeLinecap="round" d="M7 15a4 4 0 1 1 0-6c1.8 0 3.2 1.3 5 3s3.2 3 5 3a4 4 0 1 0 0-6c-1.8 0-3.2 1.3-5 3s-3.2 3-5 3z" />,
+  },
 ]
 
-const PAIN_POINTS = [
-  { stat: '$273', label: 'avg. wasted per month on forgotten subscriptions' },
-  { stat: '84%', label: 'of people underestimate what they spend on subscriptions' },
-  { stat: '2 min', label: 'to set up your full expense dashboard' },
+const STEPS = [
+  { n: '01', title: 'Add your bills', desc: 'Type in your subscriptions, utilities, insurance — anything recurring. Takes 2 minutes.' },
+  { n: '02', title: 'See the full picture', desc: "Your dashboard shows what's overdue, what's coming up, and what you're actually spending." },
+  { n: '03', title: 'Stop the bleed', desc: "Spot subscriptions you forgot about. Cancel what you don't use. Keep more of your money." },
 ]
+
+const LEDGER_ROWS = [
+  { name: 'Netflix', cat: 'Entertainment', amt: '$22.99', status: 'Overdue', tone: 'overdue' as const },
+  { name: 'Electric Bill', cat: 'Utilities', amt: '$94.00', status: 'Due in 3d', tone: 'soon' as const },
+  { name: 'Spotify Family', cat: 'Entertainment', amt: '$16.99', status: 'Tracked', tone: 'ok' as const },
+  { name: 'Car Insurance', cat: 'Insurance', amt: '$147.00', status: 'Due in 12d', tone: 'soon' as const },
+]
+
+const BADGE_TONE = {
+  overdue: 'bg-rm-red/15 text-rm-red-bright border border-rm-red/35',
+  soon: 'bg-rm-amber/15 text-rm-amber-bright border border-rm-amber/35',
+  ok: 'bg-jade/15 text-jade-bright border border-jade/35',
+}
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -44,154 +117,179 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
+    <div className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <EmberField />
 
       {/* NAV */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">R</span>
+      <nav className="sticky top-0 z-50 bg-void/85 backdrop-blur-md border-b border-edge">
+        <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-[34px] h-[34px] rounded-[9px] bg-gradient-to-br from-violet to-rm-amber flex items-center justify-center">
+              <span className={`${display} font-semibold text-void text-[1.05rem]`}>R</span>
             </div>
-            <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
+            <span className={`${display} font-semibold text-[1.15rem] text-ink-high`}>RenewalMate</span>
           </div>
-          <div className="hidden sm:flex items-center gap-7 text-sm text-gray-500">
-            <a href="#features" className="hover:text-[#1e7a4a] transition-colors">Features</a>
-            <a href="#how" className="hover:text-[#1e7a4a] transition-colors">How It Works</a>
-            <a href="#mission" className="hover:text-[#1e7a4a] transition-colors">Mission</a>
+
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-sm font-semibold text-ink-body hover:text-violet-bright transition-colors">Features</a>
+            <a href="#pricing" className="text-sm font-semibold text-ink-body hover:text-violet-bright transition-colors">Pricing</a>
+            <div className="relative group">
+              <button className="flex items-center gap-1.5 text-sm font-semibold text-ink-body hover:text-violet-bright transition-colors py-2">
+                Resources
+                <svg viewBox="0 0 24 24" className="w-3 h-3 stroke-current fill-none transition-transform group-hover:rotate-180" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+                <div className="min-w-[190px] bg-panel-raised border border-edge-lit rounded-xl p-2 shadow-2xl shadow-black/60">
+                  <Link href="/guides" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-ink-body hover:bg-panel hover:text-violet-bright">Guides</Link>
+                  <Link href="/blog" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-ink-body hover:bg-panel hover:text-violet-bright">Blog</Link>
+                  <Link href="/faq" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-ink-body hover:bg-panel hover:text-violet-bright">FAQ</Link>
+                  <Link href="/grants" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-ink-body hover:bg-panel hover:text-violet-bright">Grants</Link>
+                  <Link href="/cancel" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-ink-body hover:bg-panel hover:text-violet-bright">Cancellation Directory</Link>
+                  <div className="h-px bg-edge my-1.5 mx-1" />
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-ink-faint px-3 pt-1 pb-0.5">Mate Series</div>
+                  <a href="https://socialmate.studio/studio-stax" target="_blank" rel="noopener" className="block px-3 py-2 rounded-lg text-[0.83rem] font-semibold text-rm-amber-bright hover:bg-panel">Studio Stax ↗</a>
+                </div>
+              </div>
+            </div>
+            <a href="#mission" className="text-sm font-semibold text-ink-body hover:text-violet-bright transition-colors">Mission</a>
           </div>
-          <Link href="/signup" className="px-5 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-full hover:bg-[#166038] transition-colors">
+
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold px-[22px] py-[11px] rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_10px_28px_-6px_rgba(139,92,246,0.7)] hover:-translate-y-px transition-all"
+          >
             Get Started Free
           </Link>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="pt-24 pb-20 px-6 text-center relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-[#1e7a4a]/6 blur-[100px]" />
-        </div>
-        <div className="relative max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-[#1e7a4a]/10 text-[#1e7a4a] text-xs font-bold px-4 py-1.5 rounded-full mb-6 fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1e7a4a] animate-pulse" />
+      <section className="relative border-b border-edge pt-[88px] pb-20 px-6">
+        <div className="relative z-[2] max-w-4xl mx-auto text-center">
+          <span className="inline-flex items-center gap-2 bg-panel-raised border border-edge-lit px-4 py-[7px] rounded-full text-[0.78rem] font-semibold text-jade-bright mb-7">
+            <span className="w-1.5 h-1.5 rounded-full bg-jade shadow-[0_0_8px_var(--color-jade)]" />
             Free to track. Always.
-          </div>
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-[#1a2e22] mb-5 fade-up-2 leading-[1.05]">
+          </span>
+
+          <h1 className={`${display} font-semibold text-[clamp(2.6rem,5.6vw,4.6rem)] leading-[1.04] text-ink-high text-balance`}>
             Stop bleeding money<br />
-            <span className="text-[#1e7a4a]">on bills you forgot.</span>
+            <span className="italic font-medium bg-gradient-to-r from-rm-amber-bright to-violet-bright bg-clip-text text-transparent">
+              on bills you forgot.
+            </span>
           </h1>
-          <p className="text-gray-500 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10 fade-up-3">
-            The average person wastes <strong className="text-[#1a2e22]">$273/month</strong> on subscriptions and recurring expenses they don't track.
-            RenewalMate shows you exactly where your money is going — in one free dashboard.
+
+          <p className="max-w-[620px] mx-auto mt-6 text-[1.08rem] text-ink-body">
+            The average person wastes <b className="text-ink-high">$273/month</b>{' '}
+            on subscriptions and recurring expenses they don&apos;t track. RenewalMate shows you exactly where your money is going — in one free dashboard.
           </p>
 
-          <div className="fade-up-3 mb-12">
-            <Link href="/signup" className="inline-block px-8 py-3.5 bg-[#1e7a4a] text-white text-sm font-black rounded-full hover:bg-[#166038] transition-colors shadow-lg shadow-[#1e7a4a]/20">
+          <div className="mt-8 flex flex-col items-center gap-3.5">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold px-[22px] py-[11px] rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_10px_28px_-6px_rgba(139,92,246,0.7)] hover:-translate-y-px transition-all"
+            >
               Get Started Free →
             </Link>
-            <p className="text-gray-400 text-xs mt-3">No bank sync required. No credit card. Free to track, forever.</p>
+            <span className="text-[0.8rem] text-ink-muted">No bank sync required. No credit card. Free to track, forever.</span>
           </div>
 
-          {/* STATS */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12 fade-up-3">
-            {PAIN_POINTS.map(p => (
-              <div key={p.stat} className="text-center">
-                <p className="text-3xl font-black text-[#1e7a4a]">{p.stat}</p>
-                <p className="text-xs text-gray-400 max-w-[140px] mx-auto leading-relaxed mt-1">{p.label}</p>
+          <div className="grid grid-cols-3 gap-2 max-w-[620px] mx-auto mt-14">
+            {[
+              { n: '$273', l: 'avg. wasted per month on forgotten subscriptions' },
+              { n: '84%', l: 'of people underestimate what they spend' },
+              { n: '2 min', l: 'to set up your full expense dashboard' },
+            ].map((s) => (
+              <div key={s.n} className="text-center">
+                <div className={`${mono} ${display} font-semibold text-[2rem] bg-gradient-to-r from-rm-amber-bright to-violet-bright bg-clip-text text-transparent`}>{s.n}</div>
+                <div className="text-[0.78rem] text-ink-muted mt-1 max-w-[160px] mx-auto">{s.l}</div>
               </div>
             ))}
           </div>
 
-          {/* DASHBOARD MOCKUP */}
-          <div className="float max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-5 text-left mb-12">
-            <div className="flex items-center justify-between mb-4">
-              <p className="font-black text-sm text-[#1a2e22]">My Expense Dashboard</p>
-              <span className="text-[10px] font-bold text-[#1e7a4a] bg-[#1e7a4a]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1e7a4a] animate-pulse" />
+          {/* LEDGER PREVIEW */}
+          <div className="max-w-[560px] mx-auto mt-14 bg-panel border border-edge rounded-[20px] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.55)] overflow-hidden text-left">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-edge">
+              <span className="font-bold text-[0.95rem] text-ink-high">My Expense Dashboard</span>
+              <span className="inline-flex items-center gap-1.5 text-[0.7rem] font-bold text-jade-bright bg-jade/12 border border-jade/30 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-jade shadow-[0_0_6px_var(--color-jade)]" />
                 Live
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-px bg-edge">
               {[
-                { n: '2', label: 'Overdue', color: 'text-red-500' },
-                { n: '5', label: 'Due Soon', color: 'text-amber-500' },
-                { n: '12', label: 'On Track', color: 'text-[#1e7a4a]' },
-              ].map(s => (
-                <div key={s.label} className="bg-gray-50 rounded-xl p-3 text-center">
-                  <p className={`text-2xl font-black ${s.color}`}>{s.n}</p>
-                  <p className="text-[10px] text-gray-400 font-semibold">{s.label}</p>
+                { n: '2', l: 'Overdue', c: 'text-rm-red-bright' },
+                { n: '5', l: 'Due Soon', c: 'text-rm-amber-bright' },
+                { n: '12', l: 'On Track', c: 'text-jade-bright' },
+              ].map((t) => (
+                <div key={t.l} className="bg-panel py-4 px-2 text-center">
+                  <div className={`${mono} font-semibold text-[1.4rem] ${t.c}`}>{t.n}</div>
+                  <div className="text-[0.68rem] text-ink-muted mt-0.5">{t.l}</div>
                 </div>
               ))}
             </div>
-            {[
-              { name: 'Netflix', cat: 'Entertainment', amt: '$22.99', status: 'Overdue', sc: 'bg-red-100 text-red-600' },
-              { name: 'Electric Bill', cat: 'Utilities', amt: '$94.00', status: 'Due in 3d', sc: 'bg-amber-100 text-amber-600' },
-              { name: 'Spotify Family', cat: 'Entertainment', amt: '$16.99', status: 'Tracked', sc: 'bg-green-100 text-green-600' },
-              { name: 'Car Insurance', cat: 'Insurance', amt: '$147.00', status: 'Due in 12d', sc: 'bg-amber-100 text-amber-600' },
-            ].map(item => (
-              <div key={item.name} className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0">
-                <div>
-                  <p className="text-sm font-bold text-[#1a2e22]">{item.name}</p>
-                  <p className="text-[10px] text-gray-400">{item.cat}</p>
+            <div className="py-1.5">
+              {LEDGER_ROWS.map((row) => (
+                <div key={row.name} className="flex items-center justify-between px-6 py-3.5 border-t border-edge first:border-t-0">
+                  <div>
+                    <div className="font-bold text-[0.92rem] text-ink-high">{row.name}</div>
+                    <div className="text-[0.75rem] text-ink-muted mt-px">{row.cat}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`${mono} font-semibold text-[0.95rem] text-ink-high`}>{row.amt}</span>
+                    <span className={`text-[0.68rem] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${BADGE_TONE[row.tone]}`}>{row.status}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-black text-[#1a2e22]">{item.amt}</p>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.sc}`}>{item.status}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SIGNUP CTA */}
-      <section id="signup" className="py-16 px-6 bg-[#1e7a4a]">
+      {/* WAITLIST / SIGNUP CTA */}
+      <section id="signup" className="py-16 px-6 border-b border-edge">
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-green-200 text-xs font-bold tracking-[0.3em] uppercase mb-3">It's Live</p>
-          <h2 className="text-3xl font-black text-white mb-3">Be first in the door.</h2>
-          <p className="text-green-100 text-sm leading-relaxed mb-8">
-            RenewalMate is live, and manual tracking is free forever. Create your account and
-            start tracking your bills and subscriptions in under 2 minutes.
+          <p className="text-jade-bright text-[0.7rem] font-bold tracking-[0.3em] uppercase mb-3">It&apos;s Live</p>
+          <h2 className={`${display} font-semibold text-[1.9rem] text-ink-high mb-3`}>Be first in the door.</h2>
+          <p className="text-ink-body text-sm leading-relaxed mb-8">
+            RenewalMate is live, and manual tracking is free forever. Create your account and start tracking your bills and subscriptions in under 2 minutes.
           </p>
           <Link
             href="/signup"
-            className="inline-block px-8 py-3.5 bg-[#1a2e22] text-white text-sm font-black rounded-full hover:bg-black transition-colors"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold px-8 py-3.5 rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_10px_28px_-6px_rgba(139,92,246,0.7)] transition-all"
           >
             Create Free Account →
           </Link>
-          <p className="text-green-200/60 text-xs mt-4">
+          <p className="text-ink-muted text-xs mt-4">
             Already have an account?{' '}
-            <Link href="/login" className="text-white underline hover:no-underline">
-              Log in
-            </Link>
+            <Link href="/login" className="text-ink-high underline hover:no-underline">Log in</Link>
           </p>
 
-          <div className="mt-10 pt-8 border-t border-white/10">
-            <p className="text-green-100 text-xs mb-4">Want product updates instead? Drop your email.</p>
+          <div className="mt-10 pt-8 border-t border-edge">
+            <p className="text-ink-muted text-xs mb-4">Want product updates instead? Drop your email.</p>
             {submitted ? (
-              <p className="text-white text-sm font-bold">🎉 You're on the list.</p>
+              <p className="text-ink-high text-sm font-bold">🎉 You&apos;re on the list.</p>
             ) : (
               <form onSubmit={handleWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 <input
                   type="email"
                   required
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 px-5 py-3 rounded-full bg-white text-[#1a2e22] placeholder-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-200"
+                  className="flex-1 px-5 py-3 rounded-full bg-panel border border-edge-lit text-ink-high placeholder-ink-faint text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet/50"
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-7 py-3 bg-white/20 text-white text-sm font-black rounded-full hover:bg-white/30 transition-colors disabled:opacity-60"
+                  className="px-7 py-3 bg-panel-raised border border-edge-lit text-ink-high text-sm font-bold rounded-full hover:border-violet/50 transition-colors disabled:opacity-60"
                 >
                   {submitting ? 'Joining...' : 'Notify Me'}
                 </button>
               </form>
             )}
-            {submitError && (
-              <p className="text-red-200 text-sm mt-3">{submitError}</p>
-            )}
+            {submitError && <p className="text-rm-red-bright text-sm mt-3">{submitError}</p>}
           </div>
         </div>
       </section>
@@ -199,16 +297,16 @@ export default function Home() {
       {/* FEATURES */}
       <section id="features" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">What You Get</p>
-            <h2 className="text-4xl font-black text-[#1a2e22] tracking-tight">Everything you need.<br />Nothing you don't.</h2>
+          <div className="text-center max-w-[620px] mx-auto mb-14">
+            <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-2.5">What You Get</p>
+            <h2 className={`${display} font-semibold text-[clamp(1.7rem,3.4vw,2.4rem)] text-ink-high`}>Everything you need. Nothing you don&apos;t.</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURES.map(f => (
-              <div key={f.title} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-[#1e7a4a]/20 hover:shadow-sm transition-all">
-                <div className="text-3xl mb-4">{f.icon}</div>
-                <h3 className="font-black text-[#1a2e22] mb-2">{f.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-edge border border-edge rounded-[18px] overflow-hidden">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="bg-panel p-7">
+                <svg viewBox="0 0 24 24" className="w-[26px] h-[26px] stroke-violet-bright fill-none" strokeWidth={1.6}>{f.icon}</svg>
+                <h3 className="font-bold text-[1.05rem] text-ink-high mt-4 mb-2">{f.title}</h3>
+                <p className="text-[0.88rem] text-ink-muted leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -216,66 +314,137 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="py-24 px-6 bg-white border-y border-gray-100">
+      <section id="how" className="py-24 px-6 border-y border-edge">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">Simple by Design</p>
-            <h2 className="text-4xl font-black text-[#1a2e22] tracking-tight">Up in 2 minutes.</h2>
+          <div className="text-center max-w-[620px] mx-auto mb-14">
+            <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-2.5">Simple By Design</p>
+            <h2 className={`${display} font-semibold text-[clamp(1.7rem,3.4vw,2.4rem)] text-ink-high`}>Up in 2 minutes.</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Add your bills', desc: 'Type in your subscriptions, utilities, insurance — anything recurring. Takes 2 minutes.' },
-              { step: '02', title: 'See the full picture', desc: 'Your dashboard shows what\'s overdue, what\'s coming up, and what you\'re actually spending.' },
-              { step: '03', title: 'Stop the bleed', desc: 'Spot subscriptions you forgot about. Cancel what you don\'t use. Keep more of your money.' },
-            ].map(s => (
-              <div key={s.step} className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-[#1e7a4a]/10 text-[#1e7a4a] font-black text-lg flex items-center justify-center mx-auto mb-4">{s.step}</div>
-                <h3 className="font-black text-[#1a2e22] mb-2">{s.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-9">
+            {STEPS.map((s) => (
+              <div key={s.n}>
+                <div className={`${mono} w-[34px] h-[34px] rounded-[10px] border border-edge-lit flex items-center justify-center text-[0.8rem] font-semibold text-rm-amber-bright mb-[18px]`}>{s.n}</div>
+                <h3 className="font-bold text-[1.05rem] text-ink-high mb-2">{s.title}</h3>
+                <p className="text-[0.88rem] text-ink-muted leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* MISSION */}
-      <section id="mission" className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">Why We Built This</p>
-          <h2 className="text-4xl font-black text-[#1a2e22] tracking-tight mb-6">No paywall. No catch.</h2>
-          <p className="text-gray-500 leading-relaxed mb-6">
-            RocketMoney charges $12/month to tell you what you're already spending.
-            Monarch Money is $14.99/month. We think that's backwards.
-            A tool that helps you save money should not cost you money.
-          </p>
-          <p className="text-gray-500 leading-relaxed mb-8">
-            RenewalMate is part of <a href="https://www.gilgameshenterprise.com" className="text-[#1e7a4a] font-semibold hover:underline">Gilgamesh Enterprise</a> — a company built on one principle:
-            if it doesn't cost us anything to run, it's free for you. Period.
-          </p>
-          <div className="bg-[#f0faf5] border border-[#1e7a4a]/20 rounded-2xl p-6">
-            <p className="text-[#1a2e22] font-bold">&ldquo;Power to the people. Tear down gatekeeping walls. Build the door.&rdquo;</p>
-            <p className="text-gray-400 text-sm mt-2">— Joshua Bostic, Founder</p>
+      {/* PRICING */}
+      <section id="pricing" className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-[620px] mx-auto mb-14">
+            <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-2.5">Pricing</p>
+            <h2 className={`${display} font-semibold text-[clamp(1.7rem,3.4vw,2.4rem)] text-ink-high`}>Still cheaper than doing nothing.</h2>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[420px] md:max-w-none mx-auto">
+            {/* FREE */}
+            <div className="relative bg-panel border border-edge rounded-[20px] p-8 flex flex-col">
+              <h3 className={`${display} text-[1.3rem] text-ink-high`}>Free</h3>
+              <p className="text-[0.85rem] text-ink-muted mt-1.5 min-h-[2.3em]">Track everything by hand, forever.</p>
+              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$0<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
+              <div className="text-[0.76rem] text-ink-muted mt-1">No credit card required</div>
+              <ul className="flex flex-col gap-3 my-6 flex-1">
+                {['Unlimited bills & subscriptions', 'Renewal alerts before anything charges', 'Budgets, goals & net worth tracking', 'Cancellation directory', 'CSV import'].map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body"><Check />{f}</li>
+                ))}
+              </ul>
+              <Link href="/signup" className="w-full text-center py-3 rounded-xl font-bold text-[0.87rem] border border-edge-lit text-ink-high bg-panel-raised hover:border-violet/50 transition-colors">
+                Get Started Free
+              </Link>
+            </div>
+
+            {/* PLUS */}
+            <div className="relative bg-panel-raised border border-violet rounded-[20px] p-8 flex flex-col shadow-[0_30px_60px_-24px_rgba(139,92,246,0.4)]">
+              <span className="absolute -top-[13px] left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-[0.68rem] font-bold px-3.5 py-[5px] rounded-full whitespace-nowrap">Most Popular</span>
+              <h3 className={`${display} text-[1.3rem] text-ink-high`}>Plus</h3>
+              <p className="text-[0.85rem] text-ink-muted mt-1.5 min-h-[2.3em]">Let your bank do the typing.</p>
+              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$8<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
+              <div className="text-[0.76rem] text-ink-muted mt-1">or $80/yr — 2 months free</div>
+              <ul className="flex flex-col gap-3 my-6 flex-1">
+                {['Everything in Free', 'Automatic bank sync (Plaid) — auto-detects charges', 'AI-powered spend insights', 'Priority push alerts', 'Cancel anytime'].map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body"><Check />{f}</li>
+                ))}
+              </ul>
+              <Link href="/settings" className="w-full text-center py-3 rounded-xl font-bold text-[0.87rem] text-white bg-gradient-to-r from-violet to-[#A472F0] shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)]">
+                Upgrade to Plus
+              </Link>
+            </div>
+
+            {/* FAMILY — proposed, not built */}
+            <div className="relative bg-panel border border-edge rounded-[20px] p-8 flex flex-col opacity-70">
+              <span className="absolute -top-[13px] left-1/2 -translate-x-1/2 bg-panel-raised border border-edge-lit text-ink-muted text-[0.68rem] font-bold px-3.5 py-[5px] rounded-full whitespace-nowrap">Proposed — Not Built Yet</span>
+              <h3 className={`${display} text-[1.3rem] text-ink-high`}>Family</h3>
+              <p className="text-[0.85rem] text-ink-muted mt-1.5 min-h-[2.3em]">One dashboard for the whole household.</p>
+              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$15<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
+              <div className="text-[0.76rem] text-ink-muted mt-1">or $150/yr — 2 months free</div>
+              <ul className="flex flex-col gap-3 my-6 flex-1">
+                {['Everything in Plus', 'Shared bills across household members', 'Combined net worth view', 'Shared family goals'].map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 mt-0.5 stroke-ink-faint fill-none" strokeWidth={2.4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <button disabled className="w-full text-center py-3 rounded-xl font-bold text-[0.87rem] border border-edge-lit text-ink-muted bg-panel-raised cursor-not-allowed">
+                Join the Waitlist
+              </button>
+            </div>
+          </div>
+
+          <p className="text-center text-[0.85rem] text-ink-muted mt-10">
+            RocketMoney charges $12/mo. Monarch is $14.99/mo. Plus is $8 — and Free still does more than either of their free tiers.
+          </p>
+        </div>
+      </section>
+
+      {/* MISSION */}
+      <section id="mission" className="py-24 px-6 border-y border-edge">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-2.5">Why We Built This</p>
+          <h2 className={`${display} font-semibold text-[clamp(1.7rem,3.4vw,2.4rem)] text-ink-high mb-8`}>
+            Free where it costs us nothing.<br />Fair where it doesn&apos;t.
+          </h2>
+          <p className="text-ink-body leading-relaxed">
+            RocketMoney charges $12/month to tell you what you&apos;re already spending. Monarch Money is $14.99/month. We think that&apos;s backwards. A tool that helps you save money should not cost you money.
+          </p>
+          <p className="text-ink-body leading-relaxed mt-4">
+            RenewalMate is part of{' '}
+            <a href="https://www.gilgameshenterprise.com" className="text-ink-high font-semibold hover:text-violet-bright">Gilgamesh Enterprise</a>{' '}
+            — a company built on one principle: if it doesn&apos;t cost us anything to run, it&apos;s free for you. Period.
+          </p>
+          <blockquote className="max-w-[560px] mx-auto mt-10 text-left border-l-[3px] border-rm-amber bg-panel-raised rounded-r-[14px] rounded-l-[4px] px-7 py-[22px]">
+            <p className={`${display} italic text-[1.15rem] text-ink-high leading-relaxed`}>
+              &ldquo;Power to the people. Tear down gatekeeping walls. Build the door.&rdquo;
+            </p>
+            <cite className="block not-italic text-[0.8rem] text-ink-muted mt-3">— Joshua Bostic, Founder</cite>
+          </blockquote>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-100 py-10 px-6 bg-white">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-xs">R</span>
+      <footer className="py-10 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-edge pt-8">
+          <div className="flex items-center gap-2.5 text-[0.85rem] text-ink-muted">
+            <div className="w-[26px] h-[26px] rounded-[7px] bg-gradient-to-br from-violet to-rm-amber flex items-center justify-center">
+              <span className={`${display} font-semibold text-void text-[0.8rem]`}>R</span>
             </div>
-            <span className="text-xs text-gray-400 font-semibold">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
+            © 2026 RenewalMate — Gilgamesh Enterprise LLC
           </div>
-          <div className="flex gap-5 text-xs text-gray-400">
-            <a href="https://www.gilgameshenterprise.com" className="hover:text-[#1e7a4a] transition-colors">Gilgamesh Enterprise</a>
-            <a href="https://socialmate.studio" className="hover:text-[#1e7a4a] transition-colors">SocialMate</a>
-            <a href="mailto:gilgameshenterprisellc@gmail.com" className="hover:text-[#1e7a4a] transition-colors">Contact</a>
+          <div className="flex flex-wrap items-center gap-6 text-[0.85rem] text-ink-muted">
+            <Link href="/guides" className="hover:text-violet-bright transition-colors">Guides</Link>
+            <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
+            <span className="text-[0.64rem] font-bold uppercase tracking-wider text-ink-faint">Mate Series:</span>
+            <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
+            <a href="https://socialmate.studio/studio-stax" target="_blank" rel="noopener" className="hover:text-violet-bright transition-colors">Studio Stax</a>
+            <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href="mailto:gilgameshenterprisellc@gmail.com" className="hover:text-violet-bright transition-colors">Contact</a>
           </div>
         </div>
       </footer>
-
     </div>
   )
 }
