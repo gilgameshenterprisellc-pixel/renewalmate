@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* Premium landing palette — dark/violet/amber, distinct from the app's green interior */
+@theme {
+  --color-void: #130D1B;
+  --color-panel: #1D1626;
+  --color-panel-raised: #241B30;
+  --color-edge: #33283F;
+  --color-edge-lit: #493A59;
+  --color-violet: #8B5CF6;
+  --color-violet-bright: #B79CFF;
+  --color-rm-amber: #D9A441;
+  --color-rm-amber-bright: #F0C065;
+  --color-jade: #6FCF97;
+  --color-jade-bright: #8FE0B0;
+  --color-rm-red: #E2637A;
+  --color-rm-red-bright: #F2A9B7;
+  --color-ink-high: #F3EEFB;
+  --color-ink-body: #C7BDD6;
+  --color-ink-muted: #8A7F99;
+  --color-ink-faint: #5E5470;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
