@@ -48,6 +48,16 @@ A "Finance OS" — subscription/bill tracker that's expanding into a full person
 
 ---
 
+## Current State (September 13, 2026)
+
+- **September dormancy resolved.** Nothing shipped between July 7 and September 13 — during that gap the last two deploys (the June 19 waitlist fix and the July 7 docs merge) had both been silently erroring on Vercel the whole time, so production was actually still serving the June 14 build (PR #12). Verified live via deployment history, not assumed.
+- **`resend` missing dependency fixed (PR #15)** — `app/api/waitlist/route.ts` imported `resend` but it was never added to `package.json`, so every build since `609b907` failed at compile time. Added the dependency, verified a clean local `next build`, merged. Production should now actually be running the June 19 waitlist fix for the first time.
+- **Database verified for real, not assumed** — the Supabase `renewalmate` project was found paused (free-tier auto-pause after inactivity), restored, and directly queried: all 9 expected tables exist (`subscriptions`, `subscription_price_history`, `user_settings`, `goals`, `net_worth_items`, `budget_categories`, `plaid_items`, `push_subscriptions`, `ai_insights`) with RLS enabled on every one. The June/July backend work was real, not vaporware.
+- **Admin hub shipped (PR TBD, `app/admin/`)** — `/admin` overview page, gated by `ADMIN_EMAILS` (new env var, must be set in Vercel — see Env Vars section). Reports: total real users, new signups (7d), Plus subscriber count, estimated MRR (live-fetched from Stripe via `STRIPE_PLUS_PRICE_ID`, never hardcoded), former-Plus/churn count, bank sync adoption, AI insights generated, and per-feature usage (bills/subs tracked with item-type breakdown, goals, net worth items, budget categories), plus a recent-signups table. **Admin emails are excluded from every single number** — same lesson SocialMate learned the hard way after months of an admin's own test account inflating its stats. Visually dark/amber, intentionally distinct from the public green brand — an internal "Mate series" look shared with SocialMate's own admin tooling, not a public rebrand. Any Supabase query that errors is surfaced in a visible banner on the page rather than silently rendering a zero.
+- **Two-clone situation still open** — `C:/Users/jbost/renewalmate` (renewalmateupdates remote) still has the stale merge conflict noted below; all work this session happened in `C:/Users/jbost/renewalmate-backend` (gilgameshenterprisellc-pixel remote), which is the one Vercel actually deploys from.
+
+---
+
 ## Phase 1 — Shipped (June 13, 2026, PR #10)
 
 - **Trackables generalization** — `subscriptions` table now supports `item_type` (subscription/bill/license/one_time), `is_trial`/`trial_ends_at`, `subscription_price_history` table, and `one_time` billing cycle (no renewal date required)
@@ -151,6 +161,9 @@ A "Finance OS" — subscription/bill tracker that's expanding into a full person
 - `GEMINI_API_KEY` — Gemini AI Insights (`gemini-2.5-flash` via REST, no SDK)
 
 All Phase 2 routes degrade gracefully (503) if their env vars aren't set, so the app builds and runs fine before these are configured.
+
+### Admin (added September 13, 2026)
+- `ADMIN_EMAILS` — comma-separated list of admin emails, checked (lowercase) against `user.email` server-side in `app/admin/page.tsx`. No roles table, no `isAdmin()` helper — this is the only admin-gating mechanism in the codebase. **Must be set in Vercel or `/admin` redirects everyone, including you, to `/dashboard`.**
 
 ---
 
