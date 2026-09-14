@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
-import AppNav from '@/components/AppNav'
+import AppNavDark from '@/components/AppNavDark'
+import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 interface Goal {
   id: string
@@ -16,6 +17,10 @@ const emptyForm = {
   current_amount: '',
   target_date: '',
 }
+
+const inputCls =
+  'w-full px-3 py-2 rounded-lg bg-void border border-edge-lit text-ink-high placeholder-ink-faint text-sm focus:outline-none focus:ring-2 focus:ring-violet/40 focus:border-violet'
+const labelCls = 'block text-xs font-bold text-ink-muted mb-1'
 
 export default function GoalsClient({
   initialGoals,
@@ -77,23 +82,23 @@ export default function GoalsClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <AppNav userEmail={userEmail} />
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <AppNavDark userEmail={userEmail} />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-xl font-black text-[#1a2e22]">Goals</h1>
+          <h1 className={`${display} font-semibold text-xl text-ink-high`}>Goals</h1>
           <button
             onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-lg hover:bg-[#166038] transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-lg shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)]"
           >
             + Add goal
           </button>
         </div>
-        <p className="text-sm text-gray-500 mb-6">Set savings or payoff targets and track your progress.</p>
+        <p className="text-sm text-ink-muted mb-6">Set savings or payoff targets and track your progress.</p>
 
         {goals.length === 0 ? (
-          <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center text-sm text-gray-400">
+          <div className="bg-panel border border-edge rounded-2xl p-10 text-center text-sm text-ink-muted">
             No goals yet. Add one to start tracking progress toward something that matters.
           </div>
         ) : (
@@ -105,30 +110,30 @@ export default function GoalsClient({
               const done = current >= target
 
               return (
-                <div key={goal.id} className="bg-white border border-gray-100 rounded-2xl p-5">
+                <div key={goal.id} className="bg-panel border border-edge rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <div className="font-bold text-[#1a2e22] text-sm">{goal.name}</div>
+                      <div className="font-bold text-ink-high text-sm">{goal.name}</div>
                       {goal.target_date && (
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-ink-muted">
                           Target date: {new Date(goal.target_date).toLocaleDateString()}
                         </div>
                       )}
                     </div>
-                    <button onClick={() => handleDelete(goal.id)} className="text-gray-300 hover:text-red-500 transition-colors text-sm">
+                    <button onClick={() => handleDelete(goal.id)} className="text-ink-faint hover:text-rm-red-bright transition-colors text-sm">
                       ✕
                     </button>
                   </div>
 
-                  <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden mb-2">
+                  <div className="w-full h-2 rounded-full bg-edge overflow-hidden mb-2">
                     <div
-                      className={`h-full rounded-full transition-all ${done ? 'bg-[#1e7a4a]' : 'bg-[#1e7a4a]/70'}`}
+                      className={`h-full rounded-full transition-all ${done ? 'bg-jade' : 'bg-violet'}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
-                    <div className="text-gray-500">
+                    <div className="text-ink-muted">
                       ${current.toLocaleString(undefined, { minimumFractionDigits: 2 })} of ${target.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       {' '}({pct.toFixed(0)}%){done && ' 🎉'}
                     </div>
@@ -140,11 +145,11 @@ export default function GoalsClient({
                           autoFocus
                           value={progressValue}
                           onChange={(e) => setProgressValue(e.target.value)}
-                          className="w-24 px-2 py-1 rounded-lg border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                          className="w-24 px-2 py-1 rounded-lg bg-void border border-edge-lit text-ink-high text-xs focus:outline-none focus:ring-2 focus:ring-violet/40 focus:border-violet"
                         />
                         <button
                           onClick={() => saveProgress(goal.id)}
-                          className="px-2 py-1 bg-[#1e7a4a] text-white text-xs font-bold rounded-lg hover:bg-[#166038] transition-colors"
+                          className="px-2 py-1 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-lg"
                         >
                           Save
                         </button>
@@ -155,7 +160,7 @@ export default function GoalsClient({
                           setEditingProgress(goal.id)
                           setProgressValue(String(current))
                         }}
-                        className="font-bold text-gray-400 hover:text-[#1e7a4a] transition-colors"
+                        className="font-bold text-ink-muted hover:text-violet-bright transition-colors"
                       >
                         Update progress
                       </button>
@@ -169,64 +174,64 @@ export default function GoalsClient({
       </main>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto py-10">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
-            <h2 className="text-lg font-black text-[#1a2e22] mb-4">Add goal</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto py-10">
+          <div className="bg-panel border border-edge rounded-2xl p-6 max-w-md w-full">
+            <h2 className={`${display} font-semibold text-lg text-ink-high mb-4`}>Add goal</h2>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Goal name</label>
+                <label className={labelCls}>Goal name</label>
                 <input
                   type="text"
                   required
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="e.g. Emergency fund"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Target amount ($)</label>
+                <label className={labelCls}>Target amount ($)</label>
                 <input
                   type="number"
                   step="0.01"
                   required
                   value={form.target_amount}
                   onChange={(e) => setForm((prev) => ({ ...prev, target_amount: e.target.value }))}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Current amount ($)</label>
+                <label className={labelCls}>Current amount ($)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={form.current_amount}
                   onChange={(e) => setForm((prev) => ({ ...prev, current_amount: e.target.value }))}
                   placeholder="0.00"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Target date (optional)</label>
+                <label className={labelCls}>Target date (optional)</label>
                 <input
                   type="date"
                   value={form.target_date}
                   onChange={(e) => setForm((prev) => ({ ...prev, target_date: e.target.value }))}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                  className={inputCls}
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 rounded-lg border border-edge-lit text-sm font-bold text-ink-muted hover:text-ink-high transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2 rounded-lg bg-[#1e7a4a] text-white text-sm font-bold hover:bg-[#166038] transition-colors disabled:opacity-60"
+                  className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold disabled:opacity-60"
                 >
                   {saving ? 'Saving...' : 'Add'}
                 </button>

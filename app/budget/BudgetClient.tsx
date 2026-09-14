@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
-import AppNav from '@/components/AppNav'
+import AppNavDark from '@/components/AppNavDark'
+import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
 interface SubRow {
   amount: number
@@ -90,21 +91,21 @@ export default function BudgetClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <AppNav userEmail={userEmail} />
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <AppNavDark userEmail={userEmail} />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
-        <h1 className="text-xl font-black text-[#1a2e22] mb-1">Budget</h1>
-        <p className="text-sm text-gray-500 mb-6">Set a monthly cap per category and see how your recurring spend stacks up.</p>
+        <h1 className={`${display} font-semibold text-xl text-ink-high mb-1`}>Budget</h1>
+        <p className="text-sm text-ink-muted mb-6">Set a monthly cap per category and see how your recurring spend stacks up.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Total monthly spend</div>
-            <div className="text-2xl font-black text-[#1a2e22]">${totalSpend.toFixed(2)}</div>
+          <div className="bg-panel border border-edge rounded-2xl p-5">
+            <div className="text-xs font-bold text-ink-muted mb-1">Total monthly spend</div>
+            <div className={`${mono} text-2xl font-semibold text-ink-high`}>${totalSpend.toFixed(2)}</div>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <div className="text-xs font-bold text-gray-400 mb-1">Total monthly budget</div>
-            <div className="text-2xl font-black text-[#1a2e22]">${totalCap.toFixed(2)}</div>
+          <div className="bg-panel border border-edge rounded-2xl p-5">
+            <div className="text-xs font-bold text-ink-muted mb-1">Total monthly budget</div>
+            <div className={`${mono} text-2xl font-semibold text-ink-high`}>${totalCap.toFixed(2)}</div>
           </div>
         </div>
 
@@ -117,15 +118,15 @@ export default function BudgetClient({
             const editing = editValues[key] !== undefined
 
             return (
-              <div key={key} className="bg-white border border-gray-100 rounded-2xl p-5">
+              <div key={key} className="bg-panel border border-edge rounded-2xl p-5">
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#1e7a4a]/10 flex items-center justify-center text-lg shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-violet/10 flex items-center justify-center text-lg shrink-0">
                       {cat.icon}
                     </div>
                     <div>
-                      <div className="font-bold text-[#1a2e22] text-sm">{cat.label}</div>
-                      <div className="text-xs text-gray-400">${spend.toFixed(2)} / mo spend</div>
+                      <div className="font-bold text-ink-high text-sm">{cat.label}</div>
+                      <div className="text-xs text-ink-muted">${spend.toFixed(2)} / mo spend</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -138,13 +139,13 @@ export default function BudgetClient({
                           autoFocus
                           value={editValues[key]}
                           onChange={(e) => setEditValues((prev) => ({ ...prev, [key]: e.target.value }))}
-                          className="w-24 px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e7a4a]/30 focus:border-[#1e7a4a]"
+                          className="w-24 px-3 py-1.5 rounded-lg bg-void border border-edge-lit text-ink-high text-sm focus:outline-none focus:ring-2 focus:ring-violet/40 focus:border-violet"
                           placeholder="0.00"
                         />
                         <button
                           onClick={() => saveCap(key)}
                           disabled={saving === key}
-                          className="px-3 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-lg hover:bg-[#166038] transition-colors disabled:opacity-60"
+                          className="px-3 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-lg disabled:opacity-60"
                         >
                           {saving === key ? '...' : 'Save'}
                         </button>
@@ -152,7 +153,7 @@ export default function BudgetClient({
                     ) : (
                       <button
                         onClick={() => setEditValues((prev) => ({ ...prev, [key]: String(cap || '') }))}
-                        className="text-xs font-bold text-gray-400 hover:text-[#1e7a4a] transition-colors"
+                        className="text-xs font-bold text-ink-muted hover:text-violet-bright transition-colors"
                       >
                         {cap > 0 ? `Cap: $${cap.toFixed(2)}` : 'Set cap'}
                       </button>
@@ -160,14 +161,14 @@ export default function BudgetClient({
                   </div>
                 </div>
                 {cap > 0 && (
-                  <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-edge overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all ${over ? 'bg-red-500' : 'bg-[#1e7a4a]'}`}
+                      className={`h-full rounded-full transition-all ${over ? 'bg-rm-red' : 'bg-violet'}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
                 )}
-                {over && <div className="text-xs text-red-500 font-bold mt-1">Over budget by ${(spend - cap).toFixed(2)}/mo</div>}
+                {over && <div className="text-xs text-rm-red-bright font-bold mt-1">Over budget by ${(spend - cap).toFixed(2)}/mo</div>}
               </div>
             )
           })}
