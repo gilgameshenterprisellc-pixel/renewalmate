@@ -1,7 +1,8 @@
 'use client'
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import AppNav from '@/components/AppNav'
+import AppNavDark from '@/components/AppNavDark'
+import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 interface Row {
   name: string
@@ -158,41 +159,41 @@ export default function ImportClient({ userEmail }: { userEmail: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <AppNav userEmail={userEmail} />
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <AppNavDark userEmail={userEmail} />
 
       <main className="max-w-4xl mx-auto px-6 py-10">
-        <h1 className="text-xl font-black text-[#1a2e22] mb-1">Import</h1>
-        <p className="text-sm text-gray-500 mb-6">
+        <h1 className={`${display} font-semibold text-xl text-ink-high mb-1`}>Import</h1>
+        <p className="text-sm text-ink-muted mb-6">
           Bulk-add subscriptions, bills, licenses, or one-time expenses from a CSV file.
         </p>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-6">
-          <h2 className="text-sm font-black text-[#1a2e22] mb-2">1. Get the template</h2>
-          <p className="text-xs text-gray-500 mb-3">
-            Columns: <code className="bg-gray-100 px-1 py-0.5 rounded">name</code>, <code className="bg-gray-100 px-1 py-0.5 rounded">amount</code>, <code className="bg-gray-100 px-1 py-0.5 rounded">billing_cycle</code> (weekly/monthly/yearly/one_time), <code className="bg-gray-100 px-1 py-0.5 rounded">next_renewal_date</code> (YYYY-MM-DD), <code className="bg-gray-100 px-1 py-0.5 rounded">category</code>, <code className="bg-gray-100 px-1 py-0.5 rounded">item_type</code> (subscription/bill/license/one_time), <code className="bg-gray-100 px-1 py-0.5 rounded">cancel_url</code>, <code className="bg-gray-100 px-1 py-0.5 rounded">notes</code>.
-            Only <strong>name</strong> and <strong>next_renewal_date</strong> are required.
+        <div className="bg-panel border border-edge rounded-2xl p-6 mb-6">
+          <h2 className={`${display} font-semibold text-sm text-ink-high mb-2`}>1. Get the template</h2>
+          <p className="text-xs text-ink-muted mb-3">
+            Columns: <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">name</code>, <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">amount</code>, <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">billing_cycle</code> (weekly/monthly/yearly/one_time), <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">next_renewal_date</code> (YYYY-MM-DD), <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">category</code>, <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">item_type</code> (subscription/bill/license/one_time), <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">cancel_url</code>, <code className="bg-panel-raised text-ink-body px-1 py-0.5 rounded">notes</code>.
+            Only <strong className="text-ink-high">name</strong> and <strong className="text-ink-high">next_renewal_date</strong> are required.
           </p>
           <button
             onClick={downloadTemplate}
-            className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-bold text-[#1a2e22] hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 rounded-lg border border-edge-lit text-sm font-bold text-ink-high hover:border-violet/50 transition-colors"
           >
             Download CSV template
           </button>
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-6">
-          <h2 className="text-sm font-black text-[#1a2e22] mb-2">2. Upload your CSV</h2>
+        <div className="bg-panel border border-edge rounded-2xl p-6 mb-6">
+          <h2 className={`${display} font-semibold text-sm text-ink-high mb-2`}>2. Upload your CSV</h2>
           <input
             ref={fileRef}
             type="file"
             accept=".csv,text/csv"
             onChange={handleFile}
-            className="text-sm"
+            className="text-sm text-ink-body file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-edge-lit file:bg-panel-raised file:text-ink-high file:text-xs file:font-bold"
           />
-          {error && <p className="text-xs text-red-500 font-bold mt-2">{error}</p>}
+          {error && <p className="text-xs text-rm-red-bright font-bold mt-2">{error}</p>}
           {result && (
-            <p className="text-xs text-[#1e7a4a] font-bold mt-2">
+            <p className="text-xs text-jade-bright font-bold mt-2">
               ✓ Imported {result.imported} item{result.imported === 1 ? '' : 's'}.{' '}
               <button onClick={() => router.push('/dashboard')} className="underline">View dashboard</button>
             </p>
@@ -200,12 +201,12 @@ export default function ImportClient({ userEmail }: { userEmail: string }) {
         </div>
 
         {rows.length > 0 && (
-          <div className="bg-white border border-gray-100 rounded-2xl p-6">
-            <h2 className="text-sm font-black text-[#1a2e22] mb-3">3. Preview ({rows.length} row{rows.length === 1 ? '' : 's'})</h2>
+          <div className="bg-panel border border-edge rounded-2xl p-6">
+            <h2 className={`${display} font-semibold text-sm text-ink-high mb-3`}>3. Preview ({rows.length} row{rows.length === 1 ? '' : 's'})</h2>
             <div className="overflow-x-auto mb-4">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-left text-gray-400 border-b border-gray-100">
+                  <tr className="text-left text-ink-muted border-b border-edge">
                     <th className="py-2 pr-4">Name</th>
                     <th className="py-2 pr-4">Amount</th>
                     <th className="py-2 pr-4">Cycle</th>
@@ -216,25 +217,25 @@ export default function ImportClient({ userEmail }: { userEmail: string }) {
                 </thead>
                 <tbody>
                   {rows.slice(0, 20).map((r, i) => (
-                    <tr key={i} className="border-b border-gray-50">
-                      <td className="py-2 pr-4 font-bold text-[#1a2e22]">{r.name}</td>
-                      <td className="py-2 pr-4">${r.amount}</td>
-                      <td className="py-2 pr-4">{r.billing_cycle}</td>
-                      <td className="py-2 pr-4">{r.next_renewal_date}</td>
-                      <td className="py-2 pr-4">{r.category}</td>
-                      <td className="py-2 pr-4">{r.item_type}</td>
+                    <tr key={i} className="border-b border-edge">
+                      <td className="py-2 pr-4 font-bold text-ink-high">{r.name}</td>
+                      <td className="py-2 pr-4 text-ink-body">${r.amount}</td>
+                      <td className="py-2 pr-4 text-ink-body">{r.billing_cycle}</td>
+                      <td className="py-2 pr-4 text-ink-body">{r.next_renewal_date}</td>
+                      <td className="py-2 pr-4 text-ink-body">{r.category}</td>
+                      <td className="py-2 pr-4 text-ink-body">{r.item_type}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               {rows.length > 20 && (
-                <p className="text-xs text-gray-400 mt-2">...and {rows.length - 20} more row{rows.length - 20 === 1 ? '' : 's'}</p>
+                <p className="text-xs text-ink-muted mt-2">...and {rows.length - 20} more row{rows.length - 20 === 1 ? '' : 's'}</p>
               )}
             </div>
             <button
               onClick={handleImport}
               disabled={importing}
-              className="px-4 py-2 bg-[#1e7a4a] text-white text-sm font-bold rounded-lg hover:bg-[#166038] transition-colors disabled:opacity-60"
+              className="px-4 py-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-lg disabled:opacity-60"
             >
               {importing ? 'Importing...' : `Import ${rows.length} item${rows.length === 1 ? '' : 's'}`}
             </button>
