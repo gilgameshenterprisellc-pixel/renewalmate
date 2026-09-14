@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   const { data: settings, error: settingsError } = await supabase
     .from('user_settings')
-    .select('plan')
+    .select('plan, onboarding_completed')
     .eq('user_id', user.id)
     .maybeSingle()
   if (settingsError) console.error('dashboard: failed to load user_settings', settingsError)
@@ -25,6 +25,7 @@ export default async function DashboardPage() {
       initialSubscriptions={subscriptions ?? []}
       userEmail={user.email ?? ''}
       plan={settings?.plan ?? 'free'}
+      onboardingCompleted={settings?.onboarding_completed ?? false}
     />
   )
 }
