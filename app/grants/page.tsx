@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
 interface GrantHit {
   id: string
@@ -90,30 +91,30 @@ export default function GrantsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <nav className="sticky top-0 z-50 bg-void/90 backdrop-blur-md border-b border-edge">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">R</span>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet to-rm-amber flex items-center justify-center">
+              <span className={`${display} font-semibold text-void text-sm`}>R</span>
             </div>
-            <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
+            <span className={`${display} font-semibold text-ink-high`}>RenewalMate</span>
           </Link>
           <div className="hidden sm:flex gap-5 text-sm items-center">
-            <Link href="/grants" className="text-[#1e7a4a] font-semibold">Grants</Link>
-            <Link href="/guides" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Guides</Link>
-            <Link href="/blog" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Blog</Link>
-            <Link href="/#waitlist" className="px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+            <Link href="/grants" className="text-violet-bright font-semibold">Grants</Link>
+            <Link href="/guides" className="text-ink-muted hover:text-violet-bright transition-colors">Guides</Link>
+            <Link href="/blog" className="text-ink-muted hover:text-violet-bright transition-colors">Blog</Link>
+            <Link href="/signup" className="px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
           </div>
-          <Link href="/#waitlist" className="sm:hidden px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+          <Link href="/signup" className="sm:hidden px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
         </div>
       </nav>
 
       <div className="max-w-4xl mx-auto px-6 py-20">
         <div className="mb-10 text-center">
-          <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">Free Tool</p>
-          <h1 className="text-5xl font-black text-[#1a2e22] tracking-tight mb-4">Grants Finder</h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+          <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-3">Free Tool</p>
+          <h1 className={`${display} font-semibold text-5xl text-ink-high mb-4`}>Grants Finder</h1>
+          <p className="text-ink-body text-lg max-w-2xl mx-auto">
             Stop leaving free money on the table. Search live U.S. federal grant opportunities
             from grants.gov — for individuals, small businesses, and nonprofits. Free, no account
             required.
@@ -121,10 +122,10 @@ export default function GrantsPage() {
         </div>
 
         {/* Search + Filters */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 mb-8 space-y-4 shadow-sm">
+        <div className="bg-panel border border-edge rounded-2xl p-5 sm:p-6 mb-8 space-y-4">
           <div className="relative">
             <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint pointer-events-none"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -139,7 +140,7 @@ export default function GrantsPage() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && runSearch()}
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-[#f8faf9] border border-gray-100 text-[#1a2e22] placeholder-gray-400 focus:outline-none focus:border-[#1e7a4a]/50 text-sm transition-colors"
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-void border border-edge-lit text-ink-high placeholder-ink-faint focus:outline-none focus:border-violet/50 text-sm transition-colors"
             />
           </div>
 
@@ -147,7 +148,7 @@ export default function GrantsPage() {
             <select
               value={eligibility}
               onChange={(e) => setEligibility(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#f8faf9] border border-gray-100 text-[#1a2e22] text-sm focus:outline-none focus:border-[#1e7a4a]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-void border border-edge-lit text-ink-high text-sm focus:outline-none focus:border-violet/50 transition-colors"
             >
               {ELIGIBILITY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -159,7 +160,7 @@ export default function GrantsPage() {
             <select
               value={fundingCategory}
               onChange={(e) => setFundingCategory(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-[#f8faf9] border border-gray-100 text-[#1a2e22] text-sm focus:outline-none focus:border-[#1e7a4a]/50 transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-void border border-edge-lit text-ink-high text-sm focus:outline-none focus:border-violet/50 transition-colors"
             >
               {FUNDING_CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -172,7 +173,7 @@ export default function GrantsPage() {
           <button
             onClick={runSearch}
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#1e7a4a] hover:bg-[#1a6b41] text-white font-bold text-sm transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-violet to-[#A472F0] text-white font-bold text-sm shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] disabled:opacity-50"
           >
             {loading ? 'Searching…' : 'Search Grants'}
           </button>
@@ -180,7 +181,7 @@ export default function GrantsPage() {
 
         {/* Results */}
         {error && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-ink-muted">
             Couldn&apos;t reach grants.gov right now. Try again in a moment.
           </div>
         )}
@@ -188,7 +189,7 @@ export default function GrantsPage() {
         {!error && hasSearched && (
           <>
             {hitCount !== null && (
-              <p className="text-sm text-gray-400 mb-4">
+              <p className={`${mono} text-sm text-ink-muted mb-4`}>
                 {hitCount.toLocaleString()} open opportunit{hitCount === 1 ? 'y' : 'ies'} found
                 {hits.length < hitCount ? ` — showing first ${hits.length}` : ''}
               </p>
@@ -201,18 +202,18 @@ export default function GrantsPage() {
                   href={`https://www.grants.gov/search-results-detail/${hit.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block bg-white border border-gray-100 rounded-2xl p-5 hover:border-[#1e7a4a]/30 hover:shadow-sm transition-all group"
+                  className="block bg-panel border border-edge rounded-2xl p-5 hover:border-violet/40 transition-all group"
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <h2 className="text-base sm:text-lg font-black text-[#1a2e22] leading-snug group-hover:text-[#1e7a4a] transition-colors">
+                    <h2 className="text-base sm:text-lg font-bold text-ink-high leading-snug group-hover:text-violet-bright transition-colors">
                       {hit.title}
                     </h2>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-[#1e7a4a] bg-[#f0faf5] border border-[#1e7a4a]/20 rounded-full px-2 py-1">
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-jade-bright bg-jade/10 border border-jade/25 rounded-full px-2 py-1">
                       {hit.oppStatus}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">{hit.agency}</p>
-                  <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-400">
+                  <p className="text-sm text-ink-muted mb-3">{hit.agency}</p>
+                  <div className={`${mono} flex flex-wrap gap-x-6 gap-y-1 text-xs text-ink-faint`}>
                     <span>Posted: {formatDate(hit.openDate)}</span>
                     <span>Closes: {formatDate(hit.closeDate) || 'Rolling / Not specified'}</span>
                     <span>Opportunity #: {hit.number}</span>
@@ -222,7 +223,7 @@ export default function GrantsPage() {
             </div>
 
             {!loading && hits.length === 0 && (
-              <div className="text-center py-12 text-gray-400">
+              <div className="text-center py-12 text-ink-muted">
                 No open grants matched your filters. Try a broader search or different category.
               </div>
             )}
@@ -230,15 +231,15 @@ export default function GrantsPage() {
         )}
 
         {/* Disclaimer */}
-        <div className="mt-12 bg-[#f0faf5] border border-[#1e7a4a]/20 rounded-2xl p-7 text-center">
-          <p className="text-[#1a2e22] font-black mb-1">Free. Always.</p>
-          <p className="text-gray-500 text-sm">
+        <div className="mt-12 bg-panel-raised border border-violet/20 rounded-2xl p-7 text-center">
+          <p className={`${display} font-semibold text-ink-high mb-1`}>Free. Always.</p>
+          <p className="text-ink-muted text-sm">
             Data is pulled live from{' '}
             <a
               href="https://www.grants.gov"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#1e7a4a] hover:underline"
+              className="text-violet-bright hover:text-violet"
             >
               grants.gov
             </a>
@@ -246,19 +247,19 @@ export default function GrantsPage() {
             process applications or charge for this tool — click any result to apply directly on
             grants.gov.
           </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Brought to you by <a href="https://www.gilgameshenterprise.com" className="text-[#1e7a4a] hover:underline">Gilgamesh Enterprise</a>
+          <p className="text-xs text-ink-faint mt-2">
+            Brought to you by <a href="https://www.gilgameshenterprise.com" className="text-violet-bright hover:text-violet">Gilgamesh Enterprise</a>
           </p>
         </div>
       </div>
 
-      <footer className="border-t border-gray-100 py-8 px-6 bg-white mt-8">
+      <footer className="border-t border-edge py-8 px-6 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-gray-400">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
-          <div className="flex gap-5 text-xs text-gray-400">
-            <a href="https://www.gilgameshenterprise.com" className="hover:text-[#1e7a4a]">Gilgamesh Enterprise</a>
-            <a href="https://socialmate.studio" className="hover:text-[#1e7a4a]">SocialMate</a>
-            <Link href="/blog" className="hover:text-[#1e7a4a]">Blog</Link>
+          <span className="text-xs text-ink-muted">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
+          <div className="flex gap-5 text-xs text-ink-muted">
+            <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
+            <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
           </div>
         </div>
       </footer>

@@ -7,18 +7,21 @@ Contact: gilgameshenterprisellc@gmail.com
 /* SITE */
 Language: English
 Doctype: HTML5
-Framework: Next.js 15 (App Router)
+Framework: Next.js 16 (App Router)
 Hosted: Vercel (free tier)
-Built with: TypeScript, Tailwind CSS
+Built with: TypeScript, Tailwind CSS v4
 DNS: GoDaddy
-Last updated: June 2026
+Last updated: September 2026
 
 /* PAGES */
+Dashboard: /dashboard | Budget: /budget | Net Worth: /net-worth | Goals: /goals
 Blog: /blog (category filter: Alternatives, Personal Finance, Tips, Privacy)
 FAQ: /faq (About, Features, vs. Competitors, Privacy sections)
 Guides: /guides
+Cancellation Directory: /cancel
+Grants: /grants
 vs. Competitors: /vs/rocket-money /vs/monarch-money /vs/ynab (and more)
 
 /* PHILOSOPHY */
-Free. Always. No gatekeeping. No paywalls unless it costs us directly.
-Power to the people. Build the door.
+Free where it costs us nothing to run. Fair where it doesn't.
+No gatekeeping on the basics. Power to the people. Build the door.
