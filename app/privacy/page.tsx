@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 const PRINCIPLES = [
   {
@@ -29,69 +30,69 @@ const PRINCIPLES = [
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <nav className="sticky top-0 z-50 bg-void/90 backdrop-blur-md border-b border-edge">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">R</span>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet to-rm-amber flex items-center justify-center">
+              <span className={`${display} font-semibold text-void text-sm`}>R</span>
             </div>
-            <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
+            <span className={`${display} font-semibold text-ink-high`}>RenewalMate</span>
           </Link>
           <div className="hidden sm:flex items-center gap-5 text-sm">
-            <Link href="/guides" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Guides</Link>
-            <Link href="/blog" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Blog</Link>
-            <Link href="/faq" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">FAQ</Link>
-            <Link href="/privacy" className="text-[#1e7a4a] font-semibold">Privacy</Link>
-            <Link href="/#waitlist" className="px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+            <Link href="/guides" className="text-ink-muted hover:text-violet-bright transition-colors">Guides</Link>
+            <Link href="/blog" className="text-ink-muted hover:text-violet-bright transition-colors">Blog</Link>
+            <Link href="/faq" className="text-ink-muted hover:text-violet-bright transition-colors">FAQ</Link>
+            <Link href="/privacy" className="text-violet-bright font-semibold">Privacy</Link>
+            <Link href="/signup" className="px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
           </div>
-          <Link href="/#waitlist" className="sm:hidden px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+          <Link href="/signup" className="sm:hidden px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
         </div>
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-20">
         <div className="mb-14 text-center">
-          <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">Privacy</p>
-          <h1 className="text-5xl font-black text-[#1a2e22] tracking-tight mb-4">Your data is yours.</h1>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            We built RenewalMate because the existing tools ask too much for too little. Here's exactly what
-            we collect, what we don't, and what you can do about it — no fine print required.
+          <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-3">Privacy</p>
+          <h1 className={`${display} font-semibold text-5xl text-ink-high mb-4`}>Your data is yours.</h1>
+          <p className="text-ink-body max-w-xl mx-auto">
+            We built RenewalMate because the existing tools ask too much for too little. Here&apos;s exactly what
+            we collect, what we don&apos;t, and what you can do about it — no fine print required.
           </p>
         </div>
 
         <div className="space-y-4 mb-14">
           {PRINCIPLES.map((p) => (
-            <div key={p.title} className="bg-white border border-gray-100 rounded-2xl p-6">
-              <h2 className="font-black text-[#1a2e22] mb-2">{p.title}</h2>
-              <p className="text-gray-500 text-sm leading-relaxed">{p.body}</p>
+            <div key={p.title} className="bg-panel border border-edge rounded-2xl p-6">
+              <h2 className={`${display} font-semibold text-ink-high mb-2`}>{p.title}</h2>
+              <p className="text-ink-muted text-sm leading-relaxed">{p.body}</p>
             </div>
           ))}
         </div>
 
-        <div className="bg-[#1e7a4a]/8 border border-[#1e7a4a]/20 rounded-2xl p-8 text-center">
-          <p className="text-[#1a2e22] font-bold mb-2">Already have an account?</p>
-          <p className="text-gray-500 text-sm mb-5">
+        <div className="bg-panel-raised border border-violet/20 rounded-2xl p-8 text-center">
+          <p className={`${display} font-semibold text-ink-high mb-2`}>Already have an account?</p>
+          <p className="text-ink-muted text-sm mb-5">
             Export your data or delete your account anytime from Settings — no questions asked.
           </p>
           <Link href="/settings"
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1e7a4a] text-white font-bold rounded-full text-sm hover:bg-[#166038] transition-colors">
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-violet to-[#A472F0] text-white font-bold rounded-full text-sm shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)]">
             Go to Settings →
           </Link>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-10">
-          Questions about this policy? Email <a href="mailto:gilgameshenterprisellc@gmail.com" className="text-[#1e7a4a] hover:underline">gilgameshenterprisellc@gmail.com</a> — we read every message.
+        <p className="text-center text-xs text-ink-muted mt-10">
+          Questions about this policy? Email <a href="mailto:gilgameshenterprisellc@gmail.com" className="text-violet-bright hover:text-violet">gilgameshenterprisellc@gmail.com</a> — we read every message.
         </p>
       </div>
 
-      <footer className="border-t border-gray-100 py-8 px-6 bg-white mt-8">
+      <footer className="border-t border-edge py-8 px-6 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-gray-400">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
-          <div className="flex gap-5 text-xs text-gray-400">
-            <Link href="/faq" className="hover:text-[#1e7a4a]">FAQ</Link>
-            <Link href="/blog" className="hover:text-[#1e7a4a]">Blog</Link>
-            <Link href="/privacy" className="hover:text-[#1e7a4a]">Privacy</Link>
-            <a href="https://www.gilgameshenterprise.com" className="hover:text-[#1e7a4a]">Gilgamesh Enterprise</a>
+          <span className="text-xs text-ink-muted">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
+          <div className="flex gap-5 text-xs text-ink-muted">
+            <Link href="/faq" className="hover:text-violet-bright transition-colors">FAQ</Link>
+            <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
+            <Link href="/privacy" className="hover:text-violet-bright transition-colors">Privacy</Link>
+            <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
           </div>
         </div>
       </footer>

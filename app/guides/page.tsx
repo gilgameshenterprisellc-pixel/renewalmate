@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 export const metadata: Metadata = {
   title: "Gilgamesh's Guides — Free Business Playbooks",
@@ -61,29 +62,29 @@ const GUIDES = [
 
 export default function GuidesPage() {
   return (
-    <div className="min-h-screen bg-[#f8faf9]">
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+    <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      <nav className="sticky top-0 z-50 bg-void/90 backdrop-blur-md border-b border-edge">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1e7a4a] flex items-center justify-center">
-              <span className="text-white font-black text-sm">R</span>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet to-rm-amber flex items-center justify-center">
+              <span className={`${display} font-semibold text-void text-sm`}>R</span>
             </div>
-            <span className="font-black text-[#1a2e22] tracking-tight">RenewalMate</span>
+            <span className={`${display} font-semibold text-ink-high`}>RenewalMate</span>
           </Link>
           <div className="hidden sm:flex gap-5 text-sm items-center">
-            <Link href="/guides" className="text-[#1e7a4a] font-semibold">Guides</Link>
-            <Link href="/blog" className="text-gray-500 hover:text-[#1e7a4a] transition-colors">Blog</Link>
-            <Link href="/#waitlist" className="px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+            <Link href="/guides" className="text-violet-bright font-semibold">Guides</Link>
+            <Link href="/blog" className="text-ink-muted hover:text-violet-bright transition-colors">Blog</Link>
+            <Link href="/signup" className="px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
           </div>
-          <Link href="/#waitlist" className="sm:hidden px-4 py-1.5 bg-[#1e7a4a] text-white text-xs font-bold rounded-full">Get Access</Link>
+          <Link href="/signup" className="sm:hidden px-4 py-1.5 bg-gradient-to-r from-violet to-[#A472F0] text-white text-xs font-bold rounded-full">Get Started</Link>
         </div>
       </nav>
 
       <div className="max-w-4xl mx-auto px-6 py-20">
         <div className="mb-14 text-center">
-          <p className="text-[#1e7a4a] text-xs font-bold tracking-[0.3em] uppercase mb-3">From Gilgamesh Enterprise</p>
-          <h1 className="text-5xl font-black text-[#1a2e22] tracking-tight mb-4">Free Guides</h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+          <p className="text-[0.7rem] font-bold tracking-[0.16em] uppercase text-ink-muted mb-3">From Gilgamesh Enterprise</p>
+          <h1 className={`${display} font-semibold text-5xl text-ink-high mb-4`}>Free Guides</h1>
+          <p className="text-ink-body text-lg max-w-2xl mx-auto">
             Everything Joshua Bostic learned building from nothing — business, credit, marketing, AI, and money.
             Free forever. No email required.
           </p>
@@ -92,36 +93,36 @@ export default function GuidesPage() {
         <div className="space-y-5">
           {GUIDES.map(g => (
             <a key={g.vol} href={g.href} target="_blank" rel="noopener noreferrer"
-              className="block bg-white border border-gray-100 rounded-2xl p-7 hover:border-[#1e7a4a]/30 hover:shadow-sm transition-all group">
+              className="block bg-panel border border-edge rounded-2xl p-7 hover:border-violet/40 transition-all group">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs font-bold text-[#1e7a4a]">{g.vol}</span>
-                    <span className="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{g.tag}</span>
+                    <span className="text-xs font-bold text-violet-bright">{g.vol}</span>
+                    <span className="text-xs font-bold text-ink-muted bg-panel-raised px-2 py-0.5 rounded-full">{g.tag}</span>
                   </div>
-                  <h2 className="text-xl font-black text-[#1a2e22] mb-2 group-hover:text-[#1e7a4a] transition-colors">{g.title}</h2>
-                  <p className="text-gray-500 text-sm leading-relaxed">{g.desc}</p>
+                  <h2 className="text-xl font-bold text-ink-high mb-2 group-hover:text-violet-bright transition-colors">{g.title}</h2>
+                  <p className="text-ink-muted text-sm leading-relaxed">{g.desc}</p>
                 </div>
-                <span className="text-[#1e7a4a] text-lg flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+                <span className="text-violet-bright text-lg flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
               </div>
             </a>
           ))}
         </div>
 
-        <div className="mt-10 bg-[#f0faf5] border border-[#1e7a4a]/20 rounded-2xl p-7 text-center">
-          <p className="text-[#1a2e22] font-black mb-1">Free. Always.</p>
-          <p className="text-gray-500 text-sm">Knowledge shouldn't cost money. Share these if they help you.</p>
-          <p className="text-xs text-gray-400 mt-2">Published by <a href="https://www.gilgameshenterprise.com" className="text-[#1e7a4a] hover:underline">Gilgamesh Enterprise</a></p>
+        <div className="mt-10 bg-panel-raised border border-violet/20 rounded-2xl p-7 text-center">
+          <p className={`${display} font-semibold text-ink-high mb-1`}>Free. Always.</p>
+          <p className="text-ink-muted text-sm">Knowledge shouldn&apos;t cost money. Share these if they help you.</p>
+          <p className="text-xs text-ink-faint mt-2">Published by <a href="https://www.gilgameshenterprise.com" className="text-violet-bright hover:text-violet">Gilgamesh Enterprise</a></p>
         </div>
       </div>
 
-      <footer className="border-t border-gray-100 py-8 px-6 bg-white mt-8">
+      <footer className="border-t border-edge py-8 px-6 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-gray-400">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
-          <div className="flex gap-5 text-xs text-gray-400">
-            <a href="https://www.gilgameshenterprise.com" className="hover:text-[#1e7a4a]">Gilgamesh Enterprise</a>
-            <a href="https://socialmate.studio" className="hover:text-[#1e7a4a]">SocialMate</a>
-            <Link href="/blog" className="hover:text-[#1e7a4a]">Blog</Link>
+          <span className="text-xs text-ink-muted">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
+          <div className="flex gap-5 text-xs text-ink-muted">
+            <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
+            <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
           </div>
         </div>
       </footer>
