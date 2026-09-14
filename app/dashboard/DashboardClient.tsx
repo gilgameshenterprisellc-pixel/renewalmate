@@ -2,7 +2,31 @@
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import AppNavDark from '@/components/AppNavDark'
+import OnboardingTour, { type TourStep } from '@/components/OnboardingTour'
 import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
+
+const TOUR_STEPS: TourStep[] = [
+  {
+    target: 'summary',
+    title: 'Your spend at a glance',
+    body: "These update automatically as you add bills and subscriptions — your monthly total, yearly total, and what's due in the next 7 days.",
+  },
+  {
+    target: 'ai-insights',
+    title: 'AI Insights',
+    body: "RenewalMate Plus can connect your bank and use AI to flag what's overlapping, what you forgot about, and what to cancel. Free tracking works great without it too.",
+  },
+  {
+    target: 'add-item',
+    title: 'Add your first item',
+    body: 'Subscriptions, bills, licenses, or one-time expenses — whatever you want to keep an eye on. Takes about 10 seconds.',
+  },
+  {
+    target: 'filter-tabs',
+    title: 'Filter by type',
+    body: "Once you've added a few things, use these to jump straight to just bills, just subscriptions, or whatever you're looking for.",
+  },
+]
 
 interface Subscription {
   id: string
@@ -87,11 +111,14 @@ export default function DashboardClient({
   initialSubscriptions,
   userEmail,
   plan,
+  onboardingCompleted,
 }: {
   initialSubscriptions: Subscription[]
   userEmail: string
   plan: 'free' | 'plus'
+  onboardingCompleted: boolean
 }) {
+  const [showTour, setShowTour] = useState(!onboardingCompleted)
   const [subs, setSubs] = useState<Subscription[]>(initialSubscriptions)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -221,13 +248,23 @@ export default function DashboardClient({
     if (res.ok) setSubs((prev) => prev.filter((s) => s.id !== id))
   }
 
+  function finishTour() {
+    setShowTour(false)
+    fetch('/api/onboarding/complete', { method: 'POST' })
+      .then((res) => {
+        if (!res.ok) console.error('onboarding: failed to persist completion', res.status)
+      })
+      .catch((err) => console.error('onboarding: failed to persist completion', err))
+  }
+
   return (
     <div className={`${fontVariables} min-h-screen bg-void text-ink-body font-[family-name:var(--font-body)] antialiased`}>
+      {showTour && <OnboardingTour steps={TOUR_STEPS} onFinish={finishTour} />}
       <AppNavDark userEmail={userEmail} />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         {/* SUMMARY */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div data-tour="summary" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-panel border border-edge rounded-2xl p-5">
             <div className="text-xs font-bold text-ink-muted mb-1">Monthly total (recurring)</div>
             <div className={`${mono} text-2xl font-semibold text-ink-high`}>${stats.monthlyTotal.toFixed(2)}</div>
@@ -256,7 +293,7 @@ export default function DashboardClient({
 
         {/* AI INSIGHTS */}
         {plan === 'plus' ? (
-          <div className="bg-panel border border-edge rounded-2xl p-5 mb-6">
+          <div data-tour="ai-insights" className="bg-panel border border-edge rounded-2xl p-5 mb-6">
             <div className="flex items-center justify-between mb-1">
               <h2 className={`${display} font-semibold text-sm text-ink-high`}>AI Insights</h2>
               <button
@@ -284,7 +321,7 @@ export default function DashboardClient({
             )}
           </div>
         ) : (
-          <div className="bg-panel border border-edge rounded-2xl p-5 mb-6">
+          <div data-tour="ai-insights" className="bg-panel border border-edge rounded-2xl p-5 mb-6">
             <h2 className={`${display} font-semibold text-sm text-ink-high mb-1`}>AI Insights</h2>
             <p className="text-xs text-ink-muted mb-3">
               Get AI-powered tips on what to cancel, what&apos;s overlapping, and where you could save. Available on RenewalMate Plus.
@@ -302,6 +339,7 @@ export default function DashboardClient({
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h1 className={`${display} font-semibold text-xl text-ink-high`}>Bills & subscriptions</h1>
           <button
+            data-tour="add-item"
             onClick={openAdd}
             className="px-5 py-2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold rounded-full shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] hover:shadow-[0_10px_28px_-6px_rgba(139,92,246,0.7)] transition-shadow"
           >
@@ -310,7 +348,7 @@ export default function DashboardClient({
         </div>
 
         {/* FILTER TABS */}
-        <div className="flex items-center gap-2 mb-4 overflow-x-auto">
+        <div data-tour="filter-tabs" className="flex items-center gap-2 mb-4 overflow-x-auto">
           {(['all', 'subscription', 'bill', 'license', 'one_time'] as const).map((f) => (
             <button
               key={f}
