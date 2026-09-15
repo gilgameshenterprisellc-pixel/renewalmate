@@ -1,8 +1,31 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import EmberField from '@/components/EmberField'
 import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
+
+function LiveStats() {
+  const [stats, setStats] = useState<{ users: number; itemsTracked: number } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((r) => r.json())
+      .then((d) => setStats(d))
+      .catch(() => {})
+  }, [])
+
+  if (!stats || stats.users === 0) return null
+
+  return (
+    <div className="flex items-center gap-2 text-[0.8rem] text-ink-muted">
+      <span className="w-1.5 h-1.5 rounded-full bg-jade shadow-[0_0_8px_var(--color-jade)]" />
+      <span className={`${mono} font-semibold text-ink-high`}>{stats.users.toLocaleString()}</span>
+      <span>people tracking</span>
+      <span className={`${mono} font-semibold text-ink-high`}>{stats.itemsTracked.toLocaleString()}</span>
+      <span>bills &amp; subscriptions</span>
+    </div>
+  )
+}
 
 function Check() {
   return (
@@ -186,6 +209,7 @@ export default function Home() {
               Get Started Free →
             </Link>
             <span className="text-[0.8rem] text-ink-muted">No bank sync required. No credit card. Free to track, forever.</span>
+            <LiveStats />
           </div>
 
           <div className="grid grid-cols-3 gap-2 max-w-[620px] mx-auto mt-14">
@@ -355,8 +379,8 @@ export default function Home() {
               <span className="absolute -top-[13px] left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet to-[#A472F0] text-white text-[0.68rem] font-bold px-3.5 py-[5px] rounded-full whitespace-nowrap">Most Popular</span>
               <h3 className={`${display} text-[1.3rem] text-ink-high`}>Plus</h3>
               <p className="text-[0.85rem] text-ink-muted mt-1.5 min-h-[2.3em]">Let your bank do the typing.</p>
-              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$8<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
-              <div className="text-[0.76rem] text-ink-muted mt-1">or $80/yr — 2 months free</div>
+              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$10<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
+              <div className="text-[0.76rem] text-ink-muted mt-1">Cancel anytime</div>
               <ul className="flex flex-col gap-3 my-6 flex-1">
                 {['Everything in Free', 'Automatic bank sync (Plaid) — auto-detects charges', 'AI-powered spend insights', 'Priority push alerts', 'Cancel anytime'].map((f) => (
                   <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body"><Check />{f}</li>
@@ -367,29 +391,28 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* FAMILY — proposed, not built */}
-            <div className="relative bg-panel border border-edge rounded-[20px] p-8 flex flex-col opacity-70">
-              <span className="absolute -top-[13px] left-1/2 -translate-x-1/2 bg-panel-raised border border-edge-lit text-ink-muted text-[0.68rem] font-bold px-3.5 py-[5px] rounded-full whitespace-nowrap">Proposed — Not Built Yet</span>
+            {/* FAMILY */}
+            <div className="relative bg-panel border border-edge rounded-[20px] p-8 flex flex-col">
               <h3 className={`${display} text-[1.3rem] text-ink-high`}>Family</h3>
               <p className="text-[0.85rem] text-ink-muted mt-1.5 min-h-[2.3em]">One dashboard for the whole household.</p>
-              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$15<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
-              <div className="text-[0.76rem] text-ink-muted mt-1">or $150/yr — 2 months free</div>
+              <div className={`${mono} font-semibold text-[2.3rem] text-ink-high mt-5`}>$25<span className="font-[family-name:var(--font-body)] text-[0.9rem] text-ink-muted font-medium">/mo</span></div>
+              <div className="text-[0.76rem] text-ink-muted mt-1">Cancel anytime</div>
               <ul className="flex flex-col gap-3 my-6 flex-1">
                 {['Everything in Plus', 'Shared bills across household members', 'Combined net worth view', 'Shared family goals'].map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body">
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 mt-0.5 stroke-ink-faint fill-none" strokeWidth={2.4}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                    {f}
-                  </li>
+                  <li key={f} className="flex items-start gap-2.5 text-[0.87rem] text-ink-body"><Check />{f}</li>
                 ))}
               </ul>
-              <button disabled className="w-full text-center py-3 rounded-xl font-bold text-[0.87rem] border border-edge-lit text-ink-muted bg-panel-raised cursor-not-allowed">
-                Join the Waitlist
-              </button>
+              <Link href="/settings" className="w-full text-center py-3 rounded-xl font-bold text-[0.87rem] border border-edge-lit text-ink-high bg-panel-raised hover:border-violet/50 transition-colors">
+                Upgrade to Family
+              </Link>
             </div>
           </div>
 
           <p className="text-center text-[0.85rem] text-ink-muted mt-10">
-            RocketMoney charges $12/mo. Monarch is $14.99/mo. Plus is $8 — and Free still does more than either of their free tiers.
+            RocketMoney charges $12/mo. Monarch is $14.99/mo. Plus is $10 — and Free still does more than either of their free tiers.
+          </p>
+          <p className="text-center text-[0.72rem] text-ink-faint mt-2">
+            Prices may change as our own costs change (bank sync and AI aren&apos;t free for us to run) — we&apos;ll never raise your price without notice.
           </p>
         </div>
       </section>
