@@ -106,25 +106,34 @@ export default async function AdminPage() {
   }
 
   const plusUsers = realUsers.filter((u) => settingsByUser.get(u.id)?.plan === 'plus')
-  const churnedUsers = realUsers.filter(
-    (u) => settingsByUser.get(u.id)?.stripe_customer_id && settingsByUser.get(u.id)?.plan !== 'plus'
-  )
+  const familyUsers = realUsers.filter((u) => settingsByUser.get(u.id)?.plan === 'family')
+  const paidUsers = [...plusUsers, ...familyUsers]
+  const churnedUsers = realUsers.filter((u) => {
+    const s = settingsByUser.get(u.id)
+    return s?.stripe_customer_id && s?.plan !== 'plus' && s?.plan !== 'family'
+  })
 
   const sevenDaysAgo = Date.now() - 7 * 86400000
   const newSignups7d = realUsers.filter((u) => new Date(u.created_at).getTime() >= sevenDaysAgo)
 
   let plusPriceCents: number | null = null
+  let familyPriceCents: number | null = null
   let priceError: string | null = null
-  if (plusUsers.length > 0 && process.env.STRIPE_PLUS_PRICE_ID) {
-    try {
+  try {
+    if (plusUsers.length > 0 && process.env.STRIPE_PLUS_PRICE_ID) {
       const price = await getStripe().prices.retrieve(process.env.STRIPE_PLUS_PRICE_ID)
       plusPriceCents = price.unit_amount ?? null
-    } catch (e) {
-      priceError = e instanceof Error ? e.message : 'Unknown Stripe error'
     }
+    if (familyUsers.length > 0 && process.env.STRIPE_FAMILY_PRICE_ID) {
+      const price = await getStripe().prices.retrieve(process.env.STRIPE_FAMILY_PRICE_ID)
+      familyPriceCents = price.unit_amount ?? null
+    }
+  } catch (e) {
+    priceError = e instanceof Error ? e.message : 'Unknown Stripe error'
   }
-  const estimatedMRR =
-    plusPriceCents !== null ? (plusPriceCents * plusUsers.length) / 100 : null
+  const plusMRR = plusPriceCents !== null ? (plusPriceCents * plusUsers.length) / 100 : 0
+  const familyMRR = familyPriceCents !== null ? (familyPriceCents * familyUsers.length) / 100 : 0
+  const estimatedMRR = paidUsers.length > 0 ? plusMRR + familyMRR : null
 
   const recentSignups = [...realUsers]
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -162,10 +171,11 @@ export default async function AdminPage() {
         )}
 
         {/* Top-line stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
           <StatCard label="Total Users" value={realUsers.length} />
           <StatCard label="New (7d)" value={newSignups7d.length} />
           <StatCard label="Plus Subscribers" value={plusUsers.length} accent />
+          <StatCard label="Family Subscribers" value={familyUsers.length} accent />
           <StatCard
             label="Est. MRR"
             value={estimatedMRR !== null ? `$${estimatedMRR.toFixed(2)}` : '—'}
@@ -175,13 +185,15 @@ export default async function AdminPage() {
                 ? `Stripe price fetch failed: ${priceError}`
                 : plusUsers.length > 0 && !process.env.STRIPE_PLUS_PRICE_ID
                   ? 'STRIPE_PLUS_PRICE_ID not set'
-                  : undefined
+                  : familyUsers.length > 0 && !process.env.STRIPE_FAMILY_PRICE_ID
+                    ? 'STRIPE_FAMILY_PRICE_ID not set'
+                    : undefined
             }
           />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-          <StatCard label="Former Plus (churned)" value={churnedUsers.length} />
+          <StatCard label="Former Plus/Family (churned)" value={churnedUsers.length} />
           <StatCard label="Bank Sync Connected" value={plaidConnectedUsers} />
           <StatCard label="AI Insights Generated" value={insightsCount} />
         </div>
@@ -242,12 +254,12 @@ export default async function AdminPage() {
                       <td className="px-6 py-3">
                         <span
                           className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            plan === 'plus'
+                            plan === 'plus' || plan === 'family'
                               ? 'bg-[#d4a017]/15 text-[#eac020] border border-[#d4a017]/30'
                               : 'bg-[#2a241a] text-[#8f8570]'
                           }`}
                         >
-                          {plan === 'plus' ? 'Plus' : 'Free'}
+                          {plan === 'plus' ? 'Plus' : plan === 'family' ? 'Family' : 'Free'}
                         </span>
                       </td>
                       <td className="px-6 py-3 text-[#8f8570]">{timeAgo(u.created_at)}</td>

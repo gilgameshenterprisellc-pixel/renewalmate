@@ -21,17 +21,27 @@ export async function POST(req: NextRequest) {
 
   const admin = createAdminClient()
 
+  // Derives plan from the subscription's actual price ID rather than trusting
+  // client-set metadata, so an upgrade/downgrade via the billing portal (which
+  // doesn't go through our checkout route) still lands on the right plan.
+  function planForPriceId(priceId: string | undefined): 'plus' | 'family' {
+    if (priceId && priceId === process.env.STRIPE_FAMILY_PRICE_ID) return 'family'
+    return 'plus'
+  }
+
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
       const userId = session.metadata?.user_id
       if (userId && session.customer && session.subscription) {
+        const subscription = await getStripe().subscriptions.retrieve(session.subscription as string)
+        const plan = planForPriceId(subscription.items.data[0]?.price.id)
         await admin
           .from('user_settings')
           .upsert(
             {
               user_id: userId,
-              plan: 'plus',
+              plan,
               stripe_customer_id: session.customer as string,
               stripe_subscription_id: session.subscription as string,
               updated_at: new Date().toISOString(),
@@ -47,10 +57,11 @@ export async function POST(req: NextRequest) {
       const userId = subscription.metadata?.user_id
       if (userId) {
         const isActive = subscription.status === 'active' || subscription.status === 'trialing'
+        const plan = isActive ? planForPriceId(subscription.items.data[0]?.price.id) : 'free'
         await admin
           .from('user_settings')
           .update({
-            plan: isActive ? 'plus' : 'free',
+            plan,
             updated_at: new Date().toISOString(),
           })
           .eq('user_id', userId)
