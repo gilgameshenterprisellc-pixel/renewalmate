@@ -15,7 +15,7 @@ export default function SettingsClient({
 }: {
   userEmail: string
   initialDigestEnabled: boolean
-  plan: 'free' | 'plus'
+  plan: 'free' | 'plus' | 'family'
   plaidEnabled: boolean
 }) {
   const [digestEnabled, setDigestEnabled] = useState(initialDigestEnabled)
@@ -34,7 +34,9 @@ export default function SettingsClient({
   const [syncResult, setSyncResult] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const justUpgraded = searchParams.get('upgraded') === '1'
+  const upgradedParam = searchParams.get('upgraded')
+  const justUpgraded = upgradedParam === '1' || upgradedParam === 'plus' || upgradedParam === 'family'
+  const justUpgradedTier = upgradedParam === 'family' ? 'Family' : 'Plus'
   const push = usePushNotifications()
 
   const onPlaidSuccess = useCallback(async (publicToken: string) => {
@@ -160,12 +162,17 @@ export default function SettingsClient({
     }
   }
 
-  async function handleBilling() {
+  async function handleBilling(tier: 'plus' | 'family' = 'plus') {
     setBillingLoading(true)
     setBillingError(null)
     try {
-      const endpoint = plan === 'plus' ? '/api/stripe/portal' : '/api/stripe/checkout'
-      const res = await fetch(endpoint, { method: 'POST' })
+      const isPaid = plan === 'plus' || plan === 'family'
+      const endpoint = isPaid ? '/api/stripe/portal' : '/api/stripe/checkout'
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: isPaid ? undefined : JSON.stringify({ tier }),
+      })
       const json = await res.json()
       if (!res.ok) {
         setBillingError(json.error || 'Something went wrong. Please try again.')
@@ -215,8 +222,10 @@ export default function SettingsClient({
 
         <div className="bg-panel border border-edge rounded-2xl p-5 mb-4">
           <div className="flex items-center justify-between mb-1">
-            <h2 className={`${display} font-semibold text-sm text-ink-high`}>RenewalMate Plus</h2>
-            {plan === 'plus' && (
+            <h2 className={`${display} font-semibold text-sm text-ink-high`}>
+              RenewalMate {plan === 'family' ? 'Family' : 'Plus'}
+            </h2>
+            {(plan === 'plus' || plan === 'family') && (
               <span className="text-xs font-bold text-jade-bright bg-jade/10 px-2 py-0.5 rounded-full">
                 Active
               </span>
@@ -224,28 +233,45 @@ export default function SettingsClient({
           </div>
           {justUpgraded && (
             <p className="text-xs font-bold text-jade-bright mb-2">
-              You&apos;re on RenewalMate Plus. Thanks for the support!
+              You&apos;re on RenewalMate {justUpgradedTier}. Thanks for the support!
             </p>
           )}
           <p className="text-xs text-ink-muted mb-3">
-            {plan === 'plus'
+            {plan === 'family'
+              ? 'You have access to bank sync, AI insights, and shared household tracking. Manage your subscription or update payment details below.'
+              : plan === 'plus'
               ? 'You have access to bank sync and AI insights. Manage your subscription or update payment details below.'
-              : 'Connect your bank for automatic subscription tracking and unlock AI-powered spending insights.'}
+              : 'Connect your bank for automatic subscription tracking and unlock AI-powered spending insights — or go Family to share bills with your household.'}
           </p>
           {billingError && <p className="text-xs text-rm-red-bright font-bold mb-2">{billingError}</p>}
-          <button
-            onClick={handleBilling}
-            disabled={billingLoading}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] disabled:opacity-60"
-          >
-            {billingLoading
-              ? 'Loading...'
-              : plan === 'plus'
-              ? 'Manage billing'
-              : 'Upgrade to Plus'}
-          </button>
+          {plan === 'free' ? (
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => handleBilling('plus')}
+                disabled={billingLoading}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] disabled:opacity-60"
+              >
+                {billingLoading ? 'Loading...' : 'Upgrade to Plus — $10/mo'}
+              </button>
+              <button
+                onClick={() => handleBilling('family')}
+                disabled={billingLoading}
+                className="px-4 py-2 rounded-lg border border-edge-lit text-sm font-bold text-ink-high hover:border-violet/50 transition-colors disabled:opacity-60"
+              >
+                {billingLoading ? 'Loading...' : 'Upgrade to Family — $25/mo'}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => handleBilling()}
+              disabled={billingLoading}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet to-[#A472F0] text-white text-sm font-bold shadow-[0_8px_24px_-8px_rgba(139,92,246,0.55)] disabled:opacity-60"
+            >
+              {billingLoading ? 'Loading...' : 'Manage billing'}
+            </button>
+          )}
 
-          {plan === 'plus' && (
+          {(plan === 'plus' || plan === 'family') && (
             <div className="mt-4 pt-4 border-t border-edge">
               <div className="text-sm font-bold text-ink-high mb-1">Bank sync</div>
               <p className="text-xs text-ink-muted mb-3">

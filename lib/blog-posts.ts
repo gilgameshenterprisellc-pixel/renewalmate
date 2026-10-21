@@ -425,7 +425,7 @@ Custom categories, bill negotiation features, extra account connections, and mor
 
 **Where RenewalMate is different**
 
-RenewalMate's free tier isn't a limited preview of a paid product — manual tracking of unlimited subscriptions, bills, budgets, net worth, and goals is the actual full core product, free permanently. The paid tier (Plus, $8/month) adds bank sync and AI insights on top, but nothing about the free tier is deliberately capped to push you toward upgrading.
+RenewalMate's free tier isn't a limited preview of a paid product — manual tracking of unlimited subscriptions, bills, budgets, net worth, and goals is the actual full core product, free permanently. The paid tier (Plus, $10/month) adds bank sync and AI insights on top, but nothing about the free tier is deliberately capped to push you toward upgrading.
 
 **The honest tradeoff**
 
@@ -475,7 +475,7 @@ Every paid budgeting app with bank sync carries the same underlying tradeoff: yo
 
 **Where RenewalMate differs**
 
-The $6.99/month buys automatic bank-synced categorization across your full financial picture. RenewalMate's free tier doesn't do automatic categorization of every transaction — it's built specifically around subscriptions, bills, budgets, net worth, and goals, entered manually by default. If you want bank sync for auto-detecting recurring charges specifically (not full transaction categorization), that's what RenewalMate Plus adds at $8/month.
+The $6.99/month buys automatic bank-synced categorization across your full financial picture. RenewalMate's free tier doesn't do automatic categorization of every transaction — it's built specifically around subscriptions, bills, budgets, net worth, and goals, entered manually by default. If you want bank sync for auto-detecting recurring charges specifically (not full transaction categorization), that's what RenewalMate Plus adds at $10/month.
 
 **The actual decision**
 
