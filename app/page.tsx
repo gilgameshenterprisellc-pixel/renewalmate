@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import EmberField from '@/components/EmberField'
 import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
@@ -433,6 +434,7 @@ export default function Home() {
             <span className="text-[0.64rem] font-bold uppercase tracking-wider text-ink-faint">Mate Series:</span>
             <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
             <a href="https://socialmate.studio/studio-stax" target="_blank" rel="noopener" className="hover:text-violet-bright transition-colors">Studio Stax</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
             <a href="mailto:gilgameshenterprisellc@gmail.com" className="hover:text-violet-bright transition-colors">Contact</a>
           </div>

@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 const FAQS = [
@@ -159,6 +160,7 @@ export default function FAQPage() {
             <Link href="/faq" className="hover:text-violet-bright transition-colors">FAQ</Link>
             <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
           </div>
         </div>
       </footer>

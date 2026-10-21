@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import { notFound } from 'next/navigation'
 import { use } from 'react'
 
@@ -269,6 +270,7 @@ export default function VsPage({ params }: { params: Promise<{ slug: string }> }
           <div className="flex gap-5 text-xs text-gray-400">
             <Link href="/" className="hover:text-[#1e7a4a]">Home</Link>
             <a href="https://www.gilgameshenterprise.com" className="hover:text-[#1e7a4a]">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-[#1e7a4a]">Gilgamesh Shop</a>
             <a href="https://socialmate.studio" className="hover:text-[#1e7a4a]">SocialMate</a>
           </div>
         </div>

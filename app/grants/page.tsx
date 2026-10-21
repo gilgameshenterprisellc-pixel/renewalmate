@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import { fontVariables, displayFont as display, monoFont as mono } from '@/lib/fonts'
 
 interface GrantHit {
@@ -258,6 +259,7 @@ export default function GrantsPage() {
           <span className="text-xs text-ink-muted">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
           <div className="flex gap-5 text-xs text-ink-muted">
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
             <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
             <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
           </div>

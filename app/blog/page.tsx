@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import { BLOG_POSTS } from '@/lib/blog-posts'
 import type { Metadata } from 'next'
 import BlogClient from './BlogClient'
@@ -46,6 +47,7 @@ export default function BlogPage() {
           <div className="flex gap-5 text-xs text-ink-muted">
             <Link href="/faq" className="hover:text-violet-bright transition-colors">FAQ</Link>
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
             <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
           </div>
         </div>

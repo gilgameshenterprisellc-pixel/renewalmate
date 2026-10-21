@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import { fontVariables, displayFont as display } from '@/lib/fonts'
 
 const PRINCIPLES = [
@@ -93,6 +94,7 @@ export default function PrivacyPage() {
             <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
             <Link href="/privacy" className="hover:text-violet-bright transition-colors">Privacy</Link>
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
           </div>
         </div>
       </footer>

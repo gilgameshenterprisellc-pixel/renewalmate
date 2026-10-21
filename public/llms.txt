@@ -79,6 +79,7 @@ Part of the Gilgamesh Enterprise mission — power to the people, no gatekeeping
 
 - SocialMate (https://socialmate.studio) — free-to-start social media scheduler, 7 platforms, AI tools, Studio Stax creator marketplace
 - Gilgamesh's Guides (https://www.gilgameshenterprise.com/guides) — free entrepreneurship guides
+- Gilgamesh Shop (https://shop.gilgameshenterprise.com) — the guides as a PDF Complete Edition, plus worksheets, a 2027 content planner and build kits; 25% of every sale goes to SM-Give
 
 ---
 
