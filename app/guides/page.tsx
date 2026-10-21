@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { shopUrl } from '@/lib/shop'
 import type { Metadata } from 'next'
 import { fontVariables, displayFont as display } from '@/lib/fonts'
 
@@ -112,6 +113,7 @@ export default function GuidesPage() {
         <div className="mt-10 bg-panel-raised border border-violet/20 rounded-2xl p-7 text-center">
           <p className={`${display} font-semibold text-ink-high mb-1`}>Free. Always.</p>
           <p className="text-ink-muted text-sm">Knowledge shouldn&apos;t cost money. Share these if they help you.</p>
+          <p className="text-ink-muted text-sm mt-3">Want all 14 guides offline? <a href={shopUrl('guides', '/products/gilgameshs-guides-the-complete-edition')} className="text-violet-bright hover:text-violet font-semibold">The Complete Edition</a> puts them in one PDF with 10 printable worksheets, $19.</p>
           <p className="text-xs text-ink-faint mt-2">Published by <a href="https://www.gilgameshenterprise.com" className="text-violet-bright hover:text-violet">Gilgamesh Enterprise</a></p>
         </div>
       </div>
@@ -121,6 +123,7 @@ export default function GuidesPage() {
           <span className="text-xs text-ink-muted">© 2026 RenewalMate — Gilgamesh Enterprise LLC</span>
           <div className="flex gap-5 text-xs text-ink-muted">
             <a href="https://www.gilgameshenterprise.com" className="hover:text-violet-bright transition-colors">Gilgamesh Enterprise</a>
+            <a href={shopUrl('footer')} className="hover:text-violet-bright transition-colors">Gilgamesh Shop</a>
             <a href="https://socialmate.studio" className="hover:text-violet-bright transition-colors">SocialMate</a>
             <Link href="/blog" className="hover:text-violet-bright transition-colors">Blog</Link>
           </div>
