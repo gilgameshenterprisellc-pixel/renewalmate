@@ -81,6 +81,22 @@ Part of the Gilgamesh Enterprise mission — power to the people, no gatekeeping
 - vs. Simplifi: https://www.renewalmate.com/vs/simplifi
 - vs. Mint: https://www.renewalmate.com/vs/mint
 
+## Cancel Guides
+
+Step-by-step cancellation guides, each taken from the company's own help page and dated. Most also cover what to do when another company bills you instead, such as Apple, Google Play, Amazon, Roku or a TV or phone provider.
+
+- How to cancel Netflix: https://www.renewalmate.com/cancel/netflix
+- How to cancel Spotify: https://www.renewalmate.com/cancel/spotify
+- How to cancel Amazon Prime: https://www.renewalmate.com/cancel/amazon-prime
+- How to cancel Disney+: https://www.renewalmate.com/cancel/disney-plus
+- How to cancel HBO Max: https://www.renewalmate.com/cancel/hbo-max
+- How to cancel YouTube Premium: https://www.renewalmate.com/cancel/youtube-premium
+- How to cancel Paramount+: https://www.renewalmate.com/cancel/paramount-plus
+- How to cancel Peacock: https://www.renewalmate.com/cancel/peacock
+- How to cancel Apple subscriptions (Apple TV+, Apple Music, App Store): https://www.renewalmate.com/cancel/apple-subscriptions
+- How to cancel Audible: https://www.renewalmate.com/cancel/audible
+- How to cancel Adobe Creative Cloud: https://www.renewalmate.com/cancel/adobe-creative-cloud
+
 ## Related Products (Gilgamesh Enterprise / "Mate Series")
 
 - SocialMate (https://socialmate.studio) — free-to-start social media scheduler, 7 platforms, AI tools, Studio Stax creator marketplace
