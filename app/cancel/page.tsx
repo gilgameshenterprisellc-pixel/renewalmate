@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { shopUrl } from '@/lib/shop'
 import { fontVariables, displayFont as display } from '@/lib/fonts'
+import { guideFor, guideSlugForName } from '@/lib/cancel-guides'
 
 interface Service {
   name: string
@@ -16,7 +17,7 @@ const SERVICES: Service[] = [
   { name: 'Netflix', category: 'Streaming', method: 'link', detail: 'Account → Cancel Membership. Access continues until the end of the billing period.', url: 'https://www.netflix.com/cancelplan' },
   { name: 'Hulu', category: 'Streaming', method: 'link', detail: 'Account → Your Subscription → Cancel.', url: 'https://www.hulu.com/account' },
   { name: 'Disney+', category: 'Streaming', method: 'link', detail: 'Account → Subscription → Cancel Subscription.', url: 'https://www.disneyplus.com/account/subscription' },
-  { name: 'Max (HBO)', category: 'Streaming', method: 'link', detail: 'Settings → Subscription → Manage Subscription → Cancel.', url: 'https://help.max.com/' },
+  { name: 'HBO Max', category: 'Streaming', method: 'link', detail: 'Go to HBOMax.com/subscription, sign in, choose Cancel Your Subscription and confirm.', url: 'https://www.hbomax.com/subscription' },
   { name: 'Amazon Prime', category: 'Streaming', method: 'link', detail: 'Your Account → Prime Membership → End Membership.', url: 'https://www.amazon.com/manageyourprime' },
   { name: 'Apple TV+', category: 'Streaming', method: 'app', detail: 'Settings app → [Your Name] → Subscriptions → Apple TV+ → Cancel.' },
   { name: 'Paramount+', category: 'Streaming', method: 'link', detail: 'Account → Subscription → Cancel Subscription.', url: 'https://www.paramountplus.com/account/' },
@@ -150,7 +151,12 @@ export default function CancelDirectoryPage() {
                     {METHOD_LABEL[s.method]}
                   </span>
                 </div>
-                <p className="text-ink-muted text-sm leading-relaxed mb-2">{s.detail}</p>
+                <p className="text-ink-muted text-sm leading-relaxed mb-2">{guideFor(guideSlugForName(s.name) ?? '')?.answer ?? s.detail}</p>
+                {guideSlugForName(s.name) && (
+                  <Link href={`/cancel/${guideSlugForName(s.name)}`} className="mr-4 text-xs font-bold text-jade-bright hover:text-jade">
+                    Step-by-step guide →
+                  </Link>
+                )}
                 {s.url && (
                   <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-violet-bright hover:text-violet">
                     Go to {s.name} account settings →
