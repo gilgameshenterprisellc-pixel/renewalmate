@@ -137,7 +137,7 @@ export default async function CancelGuidePage({ params }: { params: Promise<{ sl
         )}
 
         <p className="mt-10 text-sm text-ink-muted">
-          These steps come from {g.name}&apos;s own help page, checked {CHECKED_ON}:{' '}
+          These steps come from {g.name}&apos;s own {g.sourceLabel ?? 'help page'}, checked {CHECKED_ON}:{' '}
           <a href={g.source} target="_blank" rel="noopener noreferrer" className="text-violet-bright hover:text-violet break-all">{g.source}</a>.
           Companies change their menus, so if anything looks different, that page has the current version.
         </p>
