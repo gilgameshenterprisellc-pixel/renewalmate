@@ -58,6 +58,18 @@ A "Finance OS" — subscription/bill tracker that's expanding into a full person
 
 ---
 
+## Current State (October 29, 2026)
+
+- **Cancel guides (PRs #25, #27).** 21 step-by-step guides at `/cancel/<slug>`, one per entry in `lib/cancel-guides.ts`, with HowTo and FAQPage JSON-LD. Each guide's steps come from the company's own help page, read in a browser and linked as `source`, with the date in `CHECKED_ON`. Never fill a step from memory or from a third-party "how to cancel" site. If a page doesn't say something, the guide doesn't either. Use `sourceLabel` when the source isn't a help page (Uber uses its US membership terms, because Uber's help articles differ by country).
+- **Directory cards** in `app/cancel/page.tsx` show a guide's `answer` and link when one exists, matched by name or through `CARD_ALIASES` (Apple TV+ and Apple Music go to apple-subscriptions, YouTube Music to youtube-premium). Fix a card's text when its guide proves it wrong.
+- **Guides so far:** Netflix, Spotify, Amazon Prime, Disney+, HBO Max, YouTube Premium, Paramount+, Peacock, Apple subscriptions, Audible, Adobe Creative Cloud, Hulu, ChatGPT Plus, Xbox Game Pass, PlayStation Plus, Microsoft 365, Planet Fitness, Uber One, DoorDash DashPass, SiriusXM, Kindle Unlimited (Amazon now calls it Kindle+). Next candidates: Nintendo Switch Online, Discord Nitro, Google One, Canva Pro, Dropbox, Peloton, Tidal. The New York Times blocks AI tools, so leave it out.
+- **Research notes:** Hulu's help articles render only when opened from its own help search. Xbox and Microsoft moved their cancel pages in 2026; the current URLs are in the guides.
+- **Search engines (PR #26).** IndexNow key file `public/0d4f9cfda20308a771b22cf4671bcb73.txt`. After a deploy that changes public pages, run `node scripts/indexnow-submit.mjs` (whole sitemap) or pass specific URLs. The sitemap and the 54 URLs from Oct 29 are already sent. `public/llms.txt` lists every guide. Still Joshua's: Google Search Console for renewalmate.com (a DNS TXT record at GoDaddy, then submit `sitemap.xml`).
+- **Also merged since September:** the Gilgamesh shop linked from every footer and the guides page (`lib/shop.ts` `shopUrl()`, PR #24), Family as a real paid tier with Plus repriced to $10 (PR #23), and 20 more blog posts (PR #22).
+- **Repo and account:** work in `C:/Users/jbost/renewalmate-backend` (remote `gilgameshenterprisellc-pixel/renewalmate`, base branch `master`), which is what Vercel deploys. Push with the `gilgameshenterprisellc-pixel` gh account.
+
+---
+
 ## Phase 1 — Shipped (June 13, 2026, PR #10)
 
 - **Trackables generalization** — `subscriptions` table now supports `item_type` (subscription/bill/license/one_time), `is_trial`/`trial_ends_at`, `subscription_price_history` table, and `one_time` billing cycle (no renewal date required)
