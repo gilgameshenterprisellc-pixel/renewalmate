@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { BLOG_POSTS } from '@/lib/blog-posts'
+import { CANCEL_GUIDES } from '@/lib/cancel-guides'
 
 const BASE = 'https://www.renewalmate.com'
 
@@ -16,6 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/guides`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/grants`, lastModified: now, changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE}/cancel`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    ...CANCEL_GUIDES.map(g => ({
+      url: `${BASE}/cancel/${g.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     ...BLOG_POSTS.map(post => ({
       url: `${BASE}/blog/${post.slug}`,
       lastModified: new Date(post.date),
